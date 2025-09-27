@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Register the Spacey Layout in the system -->
+        <record id="report_layout_spacey" model="report.layout">
+            <field name="name">Spacey Layout</field>
+            <field name="view_id" ref="external_layout_spacey"/>
+            <field name="image">/dh_efficient_layout/static/description/layout_spacey.png</field>
+            <field name="pdf">/dh_efficient_layout/static/description/layout_spacey.pdf</field>
+        </record>
+
+        <!-- Spacey Layout Template - Based on Clean layout structure -->
+        <template id="external_layout_spacey">
+            <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
+                <div class="o_spacey_header">
+                    <div class="row">
+                        <!-- Logo Section -->
+                        <div class="col-3">
+                            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
+                        </div>
+                        
+                        <!-- Document Title and Number Section -->
+                        <div class="col-6 text-center" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 60px;">
+                            <t t-if="o and o._name">
+                                <!-- Document type detection -->
+                                <t t-if="o._name == 'stock.picking'">
+                                    <h3 style="margin: 5px 0; color: #875A7B; font-weight: bold;">
+                                        <span t-field="o.picking_type_id.name" t-if="o.picking_type_id"/>
+                                        <span t-if="not o.picking_type_id">Transfer</span>
+                                    </h3>
+                                    <p style="margin: 0; font-weight: bold; font-size: 14px;" t-if="o.name">
+                                        <span t-field="o.name"/>
+                                    </p>
+                                </t>
+                                <t t-elif="o._name == 'account.move'">
+                                    <h3 style="margin: 5px 0; color: #875A7B; font-weight: bold;">
+                                        <span t-if="o.move_type == 'out_invoice'">Invoice</span>
+                                        <span t-elif="o.move_type == 'out_refund'">Credit Note</span>
+                                        <span t-elif="o.move_type == 'in_invoice'">Vendor Bill</span>
+                                        <span t-elif="o.move_type == 'in_refund'">Vendor Credit Note</span>
+                                        <span t-else="">Document</span>
+                                    </h3>
+                                    <p style="margin: 0; font-weight: bold; font-size: 14px;" t-if="o.name">
+                                        <span t-field="o.name"/>
+                                    </p>
+                                </t>
+                                <t t-elif="o._name == 'sale.order'">
+                                    <h3 style="margin: 5px 0; color: #875A7B; font-weight: bold;">Sales Order</h3>
+                                    <p style="margin: 0; font-weight: bold; font-size: 14px;" t-if="o.name">
+                                        <span t-field="o.name"/>
+                                    </p>
+                                </t>
+                                <t t-elif="o._name == 'purchase.order'">
+                                    <h3 style="margin: 5px 0; color: #875A7B; font-weight: bold;">Purchase Order</h3>
+                                    <p style="margin: 0; font-weight: bold; font-size: 14px;" t-if="o.name">
+                                        <span t-field="o.name"/>
+                                    </p>
+                                </t>
+                                <t t-else="">
+                                    <h3 style="margin: 5px 0; color: #875A7B; font-weight: bold;">Document</h3>
+                                    <p style="margin: 0; font-weight: bold; font-size: 14px;" t-if="o.name">
+                                        <span t-field="o.name"/>
+                                    </p>
+                                </t>
+                            </t>
+                        </div>
+                        
+                        <!-- Company Info Section -->
+                        <div class="col-3" name="company_address">
+                            <ul class="list-unstyled">
+                                <strong><li t-if="company.name"><span t-field="company.name"/></li></strong>
+                                <li t-if="company.vat"><t t-esc="company.country_id.vat_label or 'Tax ID'"/>: <span t-field="company.vat"/></li>
+                                <li t-if="company.phone">Tel: <span class="o_force_ltr" t-field="company.phone"/></li>
+                                <li t-if="company.email"><span t-field="company.email"/></li>
+                                <li t-if="company.website"><span t-field="company.website"/></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div t-attf-class="article o_report_layout_spacey o_company_#{company.id}_layout" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
+                <t t-call="web.address_layout"/>
+                <t t-raw="0"/>
+            </div>
+
+            <div t-attf-class="footer o_spacey_footer o_company_#{company.id}_layout">
+                <div class="row mt8">
+                    <div class="col-8">
+                        <div class="d-flex flex-column">
+                            <span t-field="company.report_footer" class="mb-1"/>
+                            <h4 class="mt0 mb0 text-uppercase" t-field="company.report_header"/>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <ul t-if="report_type == 'pdf'" class="list-inline pagenumber float-right text-center">
+                            <li class="list-inline-item"><strong>Page <span class="page"/> of <span class="topage"/></strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- CSS Styling for Spacey Layout - following Odoo pattern -->
+        <template id="spacey_layout_styles" inherit_id="web.styles_company_report">
+            <xpath expr="//t[@t-elif=&quot;layout == 'web.external_layout_standard'&quot;]" position="before">
+                <t t-elif="layout == 'dh_efficient_layout.external_layout_spacey'">
+                    &amp;.o_spacey_footer {
+                        border-top: 2px solid <t t-esc='secondary'/>;
+                        h4 {
+                            color: <t t-esc='secondary'/>;
+                        }
+                        .pagenumber {
+                            border: 2px solid <t t-esc='primary'/>;
+                            background-color: <t t-esc='secondary'/>;
+                        }
+                    }
+                    &amp;.o_report_layout_spacey {
+                        h1, h2, h3 {
+                            color: <t t-esc='primary'/>;
+                        }
+                        strong {
+                            color: <t t-esc='secondary'/>;
+                        }
+                        table {
+                           thead {
+                               color: <t t-esc='secondary'/>;
+                               tr th {
+                                    border-top: 2px solid <t t-esc='secondary'/> !important;
+                                }
+                            }
+                            tbody {
+                                tr:last-child td {
+                                    border-bottom: 2px solid <t t-esc='secondary'/>;
+                                }
+                            }
+                        }
+                        #total {
+                            strong {
+                                color: <t t-esc='secondary'/>;
+                            }
+                        }
+                    }
+                </t>
+            </xpath>
+        </template>
+        
+    </data>
+</odoo>
