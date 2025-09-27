@@ -56,13 +56,6 @@
                                         <span t-field="o.name"/>
                                     </p>
                                 </t>
-                                <!-- Support for custom reports like Tire Field Report -->
-                                <t t-elif="'field.report' in (o._name or '')">
-                                    <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">Tire Field Report</h2>
-                                    <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
-                                        <span t-field="o.name"/>
-                                    </p>
-                                </t>
                                 <t t-else="">
                                     <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">Document</h2>
                                     <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
@@ -78,9 +71,9 @@
                                 <div t-if="company.name" style="font-weight: bold; font-size: 13px; color: #2C5282; margin-bottom: 2px;">
                                     <span t-field="company.name"/>
                                 </div>
-                                <!-- <div t-if="company.vat" style="margin-bottom: 1px; color: #4A5568;">
+                                <div t-if="company.vat" style="margin-bottom: 1px; color: #4A5568;">
                                     <span t-esc="company.country_id.vat_label or 'Tax ID'"/>: <span t-field="company.vat"/>
-                                </div> -->
+                                </div>
                                 <div t-if="company.phone" style="margin-bottom: 1px; color: #4A5568;">
                                     Tel: <span class="o_force_ltr" t-field="company.phone"/>
                                 </div>
@@ -96,6 +89,19 @@
                 </div>
             </div>
 
+            <!-- CONTENT/BODY AREA - This is where the actual document content is rendered -->
+            <!-- 
+                This section is identical to external_layout_clean's body structure to ensure compatibility.
+                Key components:
+                - article class: o_report_layout_spacey (triggers our CSS styling rules)
+                - o_company_{company.id}_layout: Company-specific styling hooks
+                - data-oe-* attributes: Enable editing capabilities in backend
+                - web.address_layout: Renders partner/company address information
+                - t-raw="0": Injects the actual document content (invoice lines, totals, etc.)
+                
+                Content formatting (table styling, colors, borders) is controlled by CSS rules
+                defined in the spacey_layout_styles template below.
+            -->
             <div t-attf-class="article o_report_layout_spacey o_company_#{company.id}_layout" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
                 <t t-call="web.address_layout"/>
                 <t t-raw="0"/>
@@ -104,54 +110,80 @@
             <div t-attf-class="footer o_spacey_footer o_company_#{company.id}_layout">
                 <div class="row mt8">
                     <div class="col-8">
-                        <div class="d-flex flex-column">
-                            <span t-field="company.report_footer" class="mb-1"/>
-                            <h4 class="mt0 mb0 text-uppercase" t-field="company.report_header"/>
+                        <div style="display: flex; flex-direction: column;">
+                            <span t-field="company.report_footer" style="margin-bottom: 3px; font-size: 11px;"/>
+                            <h4 class="mt0 mb0 text-uppercase" t-field="company.report_header" style="font-size: 12px;"/>
                         </div>
                     </div>
-                    <div class="col-4">
-                        <ul t-if="report_type == 'pdf'" class="list-inline pagenumber float-right text-center">
-                            <li class="list-inline-item"><strong>Page <span class="page"/> of <span class="topage"/></strong></li>
-                        </ul>
+                    <div class="col-4 text-right">
+                        <span t-if="report_type == 'pdf'">
+                            Page <span class="page"/> / <span class="topage"/>
+                        </span>
                     </div>
                 </div>
             </div>
         </template>
 
-        <!-- CSS Styling for Spacey Layout - following Odoo pattern -->
+        <!-- 
+        CSS STYLING FOR SPACEY LAYOUT CONTENT FORMATTING
+        
+        This template inherits from web.styles_company_report which is Odoo's main CSS generator
+        for document layouts. It dynamically generates CSS based on company colors and layout type.
+        
+        HOW CONTENT FORMATTING WORKS:
+        1. When "Spacey Layout" is selected, Odoo generates CSS with these rules
+        2. The content area gets class="o_report_layout_spacey" 
+        3. These CSS rules style the document content (tables, text, totals)
+        4. Uses company's primary/secondary colors for consistent branding
+        
+        KEY STYLING AREAS:
+        - Table headers: Colored borders and text using secondary color
+        - Table borders: Professional borders matching Clean layout style  
+        - Headings (h1,h2,h3): Use primary color for document titles
+        - Strong text: Use secondary color for emphasis
+        - Total sections: Special formatting for invoice totals
+        - Footer: Custom border and styling for page footer
+        -->
         <template id="spacey_layout_styles" inherit_id="web.styles_company_report">
             <xpath expr="//t[@t-elif=&quot;layout == 'web.external_layout_standard'&quot;]" position="before">
+                <!-- Conditional CSS generation - only applies when Spacey Layout is selected -->
                 <t t-elif="layout == 'dh_efficient_layout.external_layout_spacey'">
+                    <!-- Footer styling -->
                     &amp;.o_spacey_footer {
                         border-top: 2px solid <t t-esc='secondary'/>;
                         h4 {
                             color: <t t-esc='secondary'/>;
                         }
-                        .pagenumber {
-                            border: 2px solid <t t-esc='primary'/>;
-                            background-color: <t t-esc='secondary'/>;
-                        }
                     }
+                    <!-- Main content area styling - this controls document content formatting -->
                     &amp;.o_report_layout_spacey {
+                        /* Document headings (titles, section headers) */
                         h1, h2, h3 {
                             color: <t t-esc='primary'/>;
                         }
+                        /* Bold text throughout document */
                         strong {
                             color: <t t-esc='secondary'/>;
                         }
+                        /* Invoice/document tables styling */
                         table {
+                           /* Table headers (Description, Quantity, Unit Price, Amount) */
                            thead {
                                color: <t t-esc='secondary'/>;
                                tr th {
-                                    border-top: 2px solid <t t-esc='secondary'/> !important;
+                                    /* Top border for table headers - creates professional look */
+                                    border-top: 3px solid <t t-esc='secondary'/> !important;
                                 }
                             }
+                            /* Table body content */
                             tbody {
                                 tr:last-child td {
-                                    border-bottom: 2px solid <t t-esc='secondary'/>;
+                                    /* Bottom border for last row - completes table frame */
+                                    border-bottom: 3px solid <t t-esc='secondary'/>;
                                 }
                             }
                         }
+                        /* Total amounts section styling */
                         #total {
                             strong {
                                 color: <t t-esc='secondary'/>;
