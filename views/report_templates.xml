@@ -26,11 +26,8 @@
                                 </t>
                                 <t t-elif="o._name == 'account.move'">
                                     <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">
-                                        <span t-if="o.move_type == 'out_invoice'">Invoice</span>
-                                        <span t-elif="o.move_type == 'out_refund'">Credit Note</span>
-                                        <span t-elif="o.move_type == 'in_invoice'">Vendor Bill</span>
-                                        <span t-elif="o.move_type == 'in_refund'">Vendor Credit Note</span>
-                                        <span t-else="">Document</span>
+                                        <!-- Simple approach - generic Invoice label for compatibility -->
+                                        Invoice
                                     </h2>
                                     <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
                                         <span t-field="o.name"/>
