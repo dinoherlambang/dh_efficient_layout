@@ -1,50 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Spacey Layout Template - Define template FIRST before referencing it -->
+        <!-- SPACEY LAYOUT MAIN TEMPLATE - Define template FIRST before referencing it -->
+        <!-- This is the main layout template that creates the document structure with 3-section header -->
         <template id="external_layout_spacey">
+            
+            <!-- ===== DOCUMENT HEADER SECTION ===== -->
+            <!-- Creates the top section with 3 columns: Logo | Document Title | Company Info -->
             <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
                 <div class="o_spacey_header">
                     <div class="row">
-                        <!-- Logo Section -->
+                        
+                        <!-- LEFT COLUMN: Company Logo -->
+                        <!-- Shows company logo if available, takes 1/4 of header width -->
                         <div class="col-3">
                             <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
                         </div>
                         
-                        <!-- Document Title and Number Section -->
+                        <!-- CENTER COLUMN: Document Title and Number -->
+                        <!-- Shows document type (INVOICE/DELIVERY NOTE) and document number -->
+                        <!-- Takes 1/2 of header width, centered both horizontally and vertically -->
                         <div class="col-6 text-center" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 60px;">
                             <t t-if="o and o._name">
-                                <!-- Document type detection with enhanced formatting -->
+                                <!-- DOCUMENT TYPE DETECTION -->
+                                <!-- Automatically detects what type of document is being printed -->
+                                <!-- and shows appropriate title (INVOICE, DELIVERY NOTE, etc.) -->
+                                
+                                <!-- FOR DELIVERY NOTES / STOCK TRANSFERS -->
                                 <t t-if="o._name == 'stock.picking'">
                                     <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">
-                                        <!-- Always show DELIVERY NOTE for stock.picking -->
+                                        <!-- Fixed title: Always shows "DELIVERY NOTE" regardless of picking type -->
                                         Delivery Note
                                     </h2>
+                                    <!-- Document Number (e.g., WH/OUT/00001) -->
                                     <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
                                         <span t-field="o.name"/>
                                     </p>
                                 </t>
+                                
+                                <!-- FOR INVOICES / ACCOUNTING DOCUMENTS -->
                                 <t t-elif="o._name == 'account.move'">
                                     <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">
-                                        <!-- Always show INVOICE for account.move -->
+                                        <!-- Fixed title: Always shows "INVOICE" for compatibility across Odoo versions -->
                                         Invoice
                                     </h2>
+                                    <!-- Invoice Number (e.g., INV/2025/00001) -->
                                     <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
                                         <span t-field="o.name"/>
                                     </p>
                                 </t>
+                                
+                                <!-- FOR SALES ORDERS -->
                                 <t t-elif="o._name == 'sale.order'">
                                     <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">Sales Order</h2>
                                     <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
                                         <span t-field="o.name"/>
                                     </p>
                                 </t>
+                                <!-- FOR PURCHASE ORDERS -->
                                 <t t-elif="o._name == 'purchase.order'">
                                     <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">Purchase Order</h2>
                                     <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
                                         <span t-field="o.name"/>
                                     </p>
                                 </t>
+                                
+                                <!-- FALLBACK FOR OTHER DOCUMENT TYPES -->
                                 <t t-else="">
                                     <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">Document</h2>
                                     <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
@@ -54,21 +75,28 @@
                             </t>
                         </div>
                         
-                        <!-- Company Info Section -->
+                        <!-- RIGHT COLUMN: Company Information -->
+                        <!-- Shows company details: name, tax ID, phone, email, website -->
+                        <!-- Takes 1/4 of header width, right-aligned -->
                         <div class="col-3" name="company_address" style="text-align: right;">
                             <div style="font-size: 12px; line-height: 1.3;">
+                                <!-- Company Name (bold and larger) -->
                                 <div t-if="company.name" style="font-weight: bold; font-size: 13px; color: #2C5282; margin-bottom: 2px;">
                                     <span t-field="company.name"/>
                                 </div>
+                                <!-- Company Tax ID/VAT Number -->
                                 <div t-if="company.vat" style="margin-bottom: 1px; color: #4A5568;">
                                     <span t-esc="company.country_id.vat_label or 'Tax ID'"/>: <span t-field="company.vat"/>
                                 </div>
+                                <!-- Company Phone Number -->
                                 <div t-if="company.phone" style="margin-bottom: 1px; color: #4A5568;">
                                     Tel: <span class="o_force_ltr" t-field="company.phone"/>
                                 </div>
+                                <!-- Company Email -->
                                 <div t-if="company.email" style="margin-bottom: 1px; color: #4A5568;">
                                     <span t-field="company.email"/>
                                 </div>
+                                <!-- Company Website -->
                                 <div t-if="company.website" style="color: #4A5568;">
                                     <span t-field="company.website"/>
                                 </div>
@@ -78,12 +106,13 @@
                 </div>
             </div>
 
-            <!-- CONTENT/BODY AREA - This is where the actual document content is rendered -->
+            <!-- ===== DOCUMENT BODY/CONTENT AREA ===== -->
+            <!-- This is where the actual document content (invoice lines, totals, etc.) is rendered -->
+            <!-- Uses standard Odoo structure for maximum compatibility with existing reports -->
             <!-- 
-                This section is identical to external_layout_clean's body structure to ensure compatibility.
-                Key components:
-                - article class: o_report_layout_spacey (triggers our CSS styling rules)
-                - o_company_{company.id}_layout: Company-specific styling hooks
+                IMPORTANT CLASSES:
+                - article class: o_report_layout_spacey (triggers our custom CSS styling rules)
+                - o_company_{company.id}_layout: Company-specific styling hooks for colors/fonts
                 - data-oe-* attributes: Enable editing capabilities in backend
                 - web.address_layout: Renders partner/company address information
                 - t-raw="0": Injects the actual document content (invoice lines, totals, etc.)
@@ -92,11 +121,19 @@
                 defined in the spacey_layout_styles template below.
             -->
             <div t-attf-class="article o_report_layout_spacey o_company_#{company.id}_layout" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
+                <!-- Address Layout: Company address information (used by some document types) -->
                 <t t-call="web.address_layout"/>
+                
+                <!-- Main Document Content: Invoice lines, totals, terms & conditions, etc. -->
+                <!-- The '0' refers to the body content passed by the report system -->
+                <!-- This is where all the actual document data appears -->
                 <t t-raw="0"/>
             </div>
 
-            <div t-attf-class="footer o_spacey_footer o_company_#{company.id}_layout">
+            <!-- ===== FOOTER SECTION ===== -->
+            <!-- Clean footer with reduced thickness and page numbering -->
+            <!-- Uses company-specific styling for consistent branding -->
+            <!-- Only shows page numbers in PDF mode for better print formatting -->
                 <div class="row mt4">
                     <div class="col-8">
                         <div style="display: flex; flex-direction: column;">
@@ -113,114 +150,154 @@
             </div>
         </template>
 
+        <!-- ===== CSS STYLING SECTION ===== -->
         <!-- 
-        CSS STYLING FOR SPACEY LAYOUT CONTENT FORMATTING
+        SPACEY LAYOUT CSS RULES AND STYLING
         
-        This template inherits from web.styles_company_report which is Odoo's main CSS generator
-        for document layouts. It dynamically generates CSS based on company colors and layout type.
+        This template dynamically generates CSS styles for the Spacey layout by inheriting 
+        from web.styles_company_report, which is Odoo's main CSS generator system.
         
-        HOW CONTENT FORMATTING WORKS:
-        1. When "Spacey Layout" is selected, Odoo generates CSS with these rules
-        2. The content area gets class="o_report_layout_spacey" 
-        3. These CSS rules style the document content (tables, text, totals)
-        4. Uses company's primary/secondary colors for consistent branding
+        HOW THE CSS GENERATION WORKS:
+        1. When a company selects "Spacey Layout", Odoo calls this template
+        2. The CSS is generated with company-specific colors and styling
+        3. Document content gets class="o_report_layout_spacey" to trigger these rules
+        4. Company colors (primary/secondary) are used for consistent branding
         
-        KEY STYLING AREAS:
-        - Table headers: Colored borders and text using secondary color
-        - Table borders: Professional borders matching Clean layout style  
-        - Headings (h1,h2,h3): Use primary color for document titles
-        - Strong text: Use secondary color for emphasis
-        - Total sections: Special formatting for invoice totals
-        - Footer: Custom border and styling for page footer
+        IMPORTANT CSS FEATURES:
+        - Table Styling: Professional borders and header coloring
+        - Typography: Company colors for headings and emphasis text
+        - Layout Spacing: Optimized margins and padding for clean appearance
+        - Total Sections: Special formatting for invoice/order totals
+        - Print Compatibility: Styles work well in both screen and PDF output
+        
+        NOTE: All CSS selectors are "flattened" (no nesting) to prevent SCSS 
+        compilation errors when mixed with QWeb template variables.
         -->
         <template id="spacey_layout_styles" inherit_id="web.styles_company_report">
             <xpath expr="//t[@t-if=&quot;layout == 'web.external_layout_background'&quot;]" position="after">
-                <!-- Conditional CSS generation - only applies when Spacey Layout is selected -->
+                <!-- CONDITIONAL CSS GENERATION -->
+                <!-- Only generates these styles when Spacey Layout is selected for a company -->
+                <!-- The condition checks if current layout matches our template ID -->
                 <t t-if="layout == 'dh_efficient_layout.external_layout_spacey'">
-                    /* Footer styling - thinner/narrower */
+                    /* ===== FOOTER STYLING ===== */
+                    /* Creates a clean, thin footer with company branding color */
                     &amp;.o_spacey_footer {
-                        border-top: 1px solid <t t-esc='secondary'/>;
+                        border-top: 1px solid <t t-esc='secondary'/>;  /* Company secondary color border */
                         margin-top: 15px;
                         padding-top: 8px;
                     }
+                    /* Footer headings use secondary color for consistency */
                     &amp;.o_spacey_footer h4 {
                         color: <t t-esc='secondary'/>;
                     }
                     
-                    /* Main content area styling - this controls document content formatting */
+                    /* ===== DOCUMENT HEADINGS ===== */
+                    /* Main document titles (h1, h2, h3) use company primary color */
+                    /* Applied to all content within o_report_layout_spacey class */
                     &amp;.o_report_layout_spacey h1,
                     &amp;.o_report_layout_spacey h2,
                     &amp;.o_report_layout_spacey h3 {
-                        color: <t t-esc='primary'/>;
+                        color: <t t-esc='primary'/>;  /* Company primary color */
                     }
                     
+                    /* ===== TEXT EMPHASIS ===== */
+                    /* Strong/bold text uses secondary color for visual hierarchy */
                     &amp;.o_report_layout_spacey strong {
-                        color: <t t-esc='secondary'/>;
+                        color: <t t-esc='secondary'/>;  /* Company secondary color */
                     }
                     
                     /* Invoice/document tables styling - simplified to match original */
+                    
+                    /* ===== TABLE STYLING ===== */
+                    /* Professional table formatting for invoice lines, order items, etc. */
+                    /* Creates clean, structured appearance for data presentation */
                     &amp;.o_report_layout_spacey table {
-                        border-collapse: collapse;
+                        border-collapse: collapse;  /* Prevents double borders */
                         width: 100%;
-                        margin: 10px 0;
+                        margin: 10px 0;  /* Vertical spacing around tables */
                     }
                     
+                    /* ===== TABLE HEADERS ===== */
+                    /* Header cells with company secondary color for professional look */
+                    /* Used in invoice line headers, totals sections, etc. */
                     &amp;.o_report_layout_spacey table thead tr th {
-                        border-top: 2px solid <t t-esc='secondary'/> !important;
-                        border-bottom: 1px solid <t t-esc='secondary'/> !important;
-                        padding: 4px 5px;
+                        border-top: 2px solid <t t-esc='secondary'/> !important;     /* Top border in company color */
+                        border-bottom: 1px solid <t t-esc='secondary'/> !important;  /* Bottom border in company color */
+                        padding: 4px 5px;      /* Reduced padding for cleaner look */
                         font-weight: bold;
-                        color: <t t-esc='secondary'/>;
+                        color: <t t-esc='secondary'/>;  /* Text color matches company branding */
                         font-size: 12px;
                         line-height: 1.2;
                     }
                     
+                    /* ===== TABLE DATA CELLS ===== */
+                    /* Body content with reduced padding for compact, professional appearance */
+                    /* Applied to invoice line items, order details, totals, etc. */
                     &amp;.o_report_layout_spacey table tbody tr td {
-                        padding: 4px 5px;
+                        padding: 4px 5px;      /* Reduced from default 8px for tighter layout */
                         font-size: 12px;
                         line-height: 1.2;
-                    }
-                    
-                    &amp;.o_report_layout_spacey table tbody tr:last-child td {
+                    }                    &amp;.o_report_layout_spacey table tbody tr:last-child td {
                         border-bottom: 2px solid <t t-esc='secondary'/> !important;
                         padding: 4px 5px;
                         font-size: 12px;
                         line-height: 1.2;
                     }
                     
-                    /* Total amounts section styling */
+                    /* ===== TOTAL AMOUNTS SECTION ===== */
+                    /* Special styling for invoice totals, order totals, etc. */
+                    /* Creates visual separation and emphasis for important financial data */
                     &amp;.o_report_layout_spacey #total {
-                        border-top: 1px solid <t t-esc='secondary'/>;
-                        margin-top: 15px;
-                        padding-top: 10px;
+                        border-top: 1px solid <t t-esc='secondary'/>;  /* Top border in company color */
+                        margin-top: 15px;       /* Space above totals section */
+                        padding-top: 10px;      /* Space below border */
                     }
                     
+                    /* Total amounts text uses secondary color for emphasis */
                     &amp;.o_report_layout_spacey #total strong {
-                        color: <t t-esc='secondary'/>;
+                        color: <t t-esc='secondary'/>;  /* Company secondary color */
                     }
                     
-                    /* Additional content sections styling */
+                    /* ===== PAGE LAYOUT ===== */
+                    /* Content padding for proper spacing within document bounds */
+                    /* Ensures content doesn't touch page edges */
                     &amp;.o_report_layout_spacey .page {
-                        padding: 0 15px;
+                        padding: 0 15px;       /* Left and right padding for content */
                     }
                     
-                    /* Information sections with better spacing */
+                    /* ===== INFORMATION SECTIONS ===== */
+                    /* Styling for document information blocks (terms, notes, etc.) */
+                    /* Creates proper spacing and color coordination */
                     &amp;.o_report_layout_spacey #informations {
-                        margin: 20px 0;
+                        margin: 20px 0;        /* Vertical spacing around info blocks */
                     }
                     
+                    /* Information headings use secondary color for consistency */
                     &amp;.o_report_layout_spacey #informations strong {
-                        color: <t t-esc='secondary'/>;
+                        color: <t t-esc='secondary'/>;  /* Company secondary color */
                     }
                 </t>
             </xpath>
         </template>
         
-        <!-- Register the Spacey Layout in the system - AFTER templates are defined -->
+        <!-- ===== LAYOUT REGISTRATION ===== -->
+        <!-- Register the Spacey Layout in Odoo's layout system -->
+        <!-- This makes it available in Company Settings > Report Layout dropdown -->
+        <!-- IMPORTANT: This record must be defined AFTER the template definitions above -->
         <record id="report_layout_spacey" model="report.layout">
+            <!-- Display name in the layout selection dropdown -->
             <field name="name">Spacey Layout</field>
+            
+            <!-- Reference to our main template (external_layout_spacey) -->
+            <!-- This tells Odoo which template to use when this layout is selected -->
             <field name="view_id" ref="external_layout_spacey"/>
+            
+            <!-- Preview image shown in Company Settings (optional) -->
+            <!-- Should be a screenshot of the layout for easy identification -->
             <field name="image">/dh_efficient_layout/static/description/layout_spacey.png</field>
+            
+            <!-- Sample PDF for preview (optional) -->
+            <!-- Shows users what the final output will look like -->
             <field name="pdf">/dh_efficient_layout/static/description/layout_spacey.pdf</field>
         </record>
         
