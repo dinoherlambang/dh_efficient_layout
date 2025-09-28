@@ -140,6 +140,8 @@
                     <!-- Footer styling -->
                     &amp;.o_spacey_footer {
                         border-top: 2px solid <t t-esc='secondary'/>;
+                        margin-top: 25px;
+                        padding-top: 15px;
                         h4 {
                             color: <t t-esc='secondary'/>;
                         }
@@ -156,24 +158,54 @@
                         }
                         /* Invoice/document tables styling */
                         table {
+                           /* All table borders */
+                           border-collapse: collapse;
+                           width: 100%;
+                           margin: 15px 0;
+                           
                            /* Table headers (Description, Quantity, Unit Price, Amount) */
                            thead {
                                color: <t t-esc='secondary'/>;
                                tr th {
-                                    /* Top border for table headers - creates professional look */
-                                    border-top: 3px solid <t t-esc='secondary'/> !important;
+                                    /* Top and bottom borders for headers - professional look */
+                                    border-top: 2px solid <t t-esc='secondary'/> !important;
+                                    border-bottom: 2px solid <t t-esc='secondary'/> !important;
+                                    padding: 8px 5px;
+                                    font-weight: bold;
                                 }
                             }
                             /* Table body content */
                             tbody {
+                                tr {
+                                    td {
+                                        border-bottom: 1px solid #dee2e6;
+                                        padding: 6px 5px;
+                                    }
+                                }
                                 tr:last-child td {
-                                    /* Bottom border for last row - completes table frame */
-                                    border-bottom: 3px solid <t t-esc='secondary'/>;
+                                    /* Thick bottom border for last row - completes table frame */
+                                    border-bottom: 2px solid <t t-esc='secondary'/> !important;
                                 }
                             }
                         }
                         /* Total amounts section styling */
                         #total {
+                            border-top: 1px solid <t t-esc='secondary'/>;
+                            margin-top: 15px;
+                            padding-top: 10px;
+                            strong {
+                                color: <t t-esc='secondary'/>;
+                            }
+                        }
+                        
+                        /* Additional content sections styling */
+                        .page {
+                            padding: 0 15px;
+                        }
+                        
+                        /* Information sections with better spacing */
+                        #informations {
+                            margin: 20px 0;
                             strong {
                                 color: <t t-esc='secondary'/>;
                             }
