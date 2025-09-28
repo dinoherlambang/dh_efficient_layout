@@ -145,9 +145,9 @@
         - Footer: Custom border and styling for page footer
         -->
         <template id="spacey_layout_styles" inherit_id="web.styles_company_report">
-            <xpath expr="//t[@t-elif=&quot;layout == 'web.external_layout_standard'&quot;]" position="before">
+            <xpath expr="//t[@t-if=&quot;layout == 'web.external_layout_background'&quot;]" position="after">
                 <!-- Conditional CSS generation - only applies when Spacey Layout is selected -->
-                <t t-elif="layout == 'dh_efficient_layout.external_layout_spacey'">
+                <t t-if="layout == 'dh_efficient_layout.external_layout_spacey'">
                     <!-- Footer styling -->
                     &amp;.o_spacey_footer {
                         border-top: 2px solid <t t-esc='secondary'/>;
