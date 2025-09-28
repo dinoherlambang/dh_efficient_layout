@@ -17,8 +17,8 @@
                                 <!-- Document type detection with enhanced formatting -->
                                 <t t-if="o._name == 'stock.picking'">
                                     <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">
-                                        <span t-field="o.picking_type_id.name" t-if="o.picking_type_id"/>
-                                        <span t-if="not o.picking_type_id">Transfer</span>
+                                        <!-- Always show DELIVERY NOTE for stock.picking -->
+                                        Delivery Note
                                     </h2>
                                     <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
                                         <span t-field="o.name"/>
@@ -26,7 +26,7 @@
                                 </t>
                                 <t t-elif="o._name == 'account.move'">
                                     <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">
-                                        <!-- Simple approach - generic Invoice label for compatibility -->
+                                        <!-- Always show INVOICE for account.move -->
                                         Invoice
                                     </h2>
                                     <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
@@ -97,15 +97,15 @@
             </div>
 
             <div t-attf-class="footer o_spacey_footer o_company_#{company.id}_layout">
-                <div class="row mt8">
+                <div class="row mt4">
                     <div class="col-8">
                         <div style="display: flex; flex-direction: column;">
-                            <span t-field="company.report_footer" style="margin-bottom: 3px; font-size: 11px;"/>
-                            <h4 class="mt0 mb0 text-uppercase" t-field="company.report_header" style="font-size: 12px;"/>
+                            <span t-field="company.report_footer" style="margin-bottom: 2px; font-size: 10px;"/>
+                            <h4 class="mt0 mb0 text-uppercase" t-field="company.report_header" style="font-size: 11px;"/>
                         </div>
                     </div>
                     <div class="col-4 text-right">
-                        <span t-if="report_type == 'pdf'">
+                        <span t-if="report_type == 'pdf'" style="font-size: 10px;">
                             Page <span class="page"/> / <span class="topage"/>
                         </span>
                     </div>
@@ -137,11 +137,11 @@
             <xpath expr="//t[@t-if=&quot;layout == 'web.external_layout_background'&quot;]" position="after">
                 <!-- Conditional CSS generation - only applies when Spacey Layout is selected -->
                 <t t-if="layout == 'dh_efficient_layout.external_layout_spacey'">
-                    /* Footer styling */
+                    /* Footer styling - thinner/narrower */
                     &amp;.o_spacey_footer {
-                        border-top: 2px solid <t t-esc='secondary'/>;
-                        margin-top: 25px;
-                        padding-top: 15px;
+                        border-top: 1px solid <t t-esc='secondary'/>;
+                        margin-top: 15px;
+                        padding-top: 8px;
                     }
                     &amp;.o_spacey_footer h4 {
                         color: <t t-esc='secondary'/>;
@@ -158,31 +158,24 @@
                         color: <t t-esc='secondary'/>;
                     }
                     
-                    /* Invoice/document tables styling */
+                    /* Invoice/document tables styling - simplified to match original */
                     &amp;.o_report_layout_spacey table {
                         border-collapse: collapse;
                         width: 100%;
-                        margin: 15px 0;
-                    }
-                    
-                    &amp;.o_report_layout_spacey table thead {
-                        color: <t t-esc='secondary'/>;
+                        margin: 10px 0;
                     }
                     
                     &amp;.o_report_layout_spacey table thead tr th {
                         border-top: 2px solid <t t-esc='secondary'/> !important;
-                        border-bottom: 2px solid <t t-esc='secondary'/> !important;
+                        border-bottom: 1px solid <t t-esc='secondary'/> !important;
                         padding: 8px 5px;
                         font-weight: bold;
-                    }
-                    
-                    &amp;.o_report_layout_spacey table tbody tr td {
-                        border-bottom: 1px solid #dee2e6;
-                        padding: 6px 5px;
+                        color: <t t-esc='secondary'/>;
                     }
                     
                     &amp;.o_report_layout_spacey table tbody tr:last-child td {
                         border-bottom: 2px solid <t t-esc='secondary'/> !important;
+                        padding: 6px 5px;
                     }
                     
                     /* Total amounts section styling */
