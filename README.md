@@ -131,8 +131,105 @@ Add or modify document type detection logic in the template's conditional blocks
 
 ## Development Notes
 
+### How Odoo's Layout System Works
+
+Understanding Odoo's layout adaptation mechanism is crucial for proper implementation:
+
+#### The Layout Dispatcher Pattern
+Odoo uses a sophisticated dispatcher system where all base addons (account, sale, stock, purchase, etc.) use a generic call:
+
+```xml
+<!-- All reports use this generic call -->
+<t t-call="web.external_layout">
+    <!-- Document content goes here -->
+</t>
+```
+
+#### The Core Mechanism
+The `web.external_layout` template acts as a **dispatcher** that dynamically selects the appropriate layout:
+
+```xml
+<!-- From web/views/report_templates.xml -->
+<template id="external_layout">
+    <!-- Company and document context setup -->
+    <t t-if="company.external_report_layout_id" 
+       t-call="{{company.external_report_layout_id.key}}">
+        <t t-raw="0"/>
+    </t>
+    <t t-else="" t-call="web.external_layout_standard">
+        <t t-raw="0"/>
+    </t>
+</template>
+```
+
+#### Key Components:
+1. **Dynamic Template Calling**: `t-call="{{company.external_report_layout_id.key}}"` 
+2. **Runtime Resolution**: Layout is determined when the report is generated
+3. **Fallback System**: Uses `web.external_layout_standard` if no layout is selected
+4. **Universal Compatibility**: All existing reports automatically support any new layout
+
+#### Layout Registration System:
+- **Standard Layout**: `key = "web.external_layout_standard"`
+- **Clean Layout**: `key = "web.external_layout_clean"`
+- **Boxed Layout**: `key = "web.external_layout_boxed"`
+- **Background Layout**: `key = "web.external_layout_background"`
+- **Our Spacey Layout**: `key = "dh_efficient_layout.external_layout_spacey"`
+
+This explains why our custom layout works seamlessly with:
+- Invoice reports (`account` module)
+- Sales orders (`sale` module) 
+- Purchase orders (`purchase` module)
+- Delivery slips (`stock` module)
+- All other standard and custom reports
+
 ### Content Area Implementation
 The layout's content/body area is architecturally identical to `external_layout_clean` to ensure full compatibility with all Odoo documents. The key difference lies in the CSS styling system that controls how content is formatted and displayed.
+
+### Content Formatting Differences Between Layouts
+
+During development, we discovered that different layouts (Standard, Clean, Boxed, Background) produce different content formatting even though they use identical content area structure. Here's how it works:
+
+#### The Content Area Structure (Identical Across All Layouts):
+```xml
+<div class="article o_report_layout_[name] o_company_#{company.id}_layout" 
+     t-att-data-oe-model="o and o._name" 
+     t-att-data-oe-id="o and o.id" 
+     t-att-data-oe-lang="o and o.env.context.get('lang')">
+    <t t-call="web.address_layout"/>
+    <t t-raw="0"/>
+</div>
+```
+
+#### The Formatting Control System:
+The visual differences come from **CSS styling rules** that target the layout-specific class:
+
+1. **CSS Class Assignment**: Each layout assigns its own class (`o_report_layout_clean`, `o_report_layout_spacey`, etc.)
+2. **Dynamic CSS Generation**: The `web.styles_company_report` template generates CSS rules conditionally
+3. **Content Styling**: CSS rules control table borders, text colors, heading styles, and spacing
+
+#### Example CSS Generation Pattern:
+```xml
+<!-- From web.styles_company_report -->
+<t t-elif="layout == 'web.external_layout_clean'">
+    /* Clean layout specific styling */
+    &.o_report_layout_clean {
+        table { /* table styling */ }
+        h1, h2, h3 { /* heading styling */ }
+    }
+</t>
+<t t-elif="layout == 'dh_efficient_layout.external_layout_spacey'">
+    /* Our spacey layout styling */
+    &.o_report_layout_spacey {
+        table { /* our table styling */ }
+        h1, h2, h3 { /* our heading styling */ }
+    }
+</t>
+```
+
+This system allows:
+- **Consistent Content Structure**: All layouts use the same content injection mechanism
+- **Visual Differentiation**: Each layout can have unique styling for tables, text, and elements
+- **Company Branding**: Dynamic color integration using company theme colors
 
 ### CSS Generation Process
 1. **Layout Selection**: When user selects "Spacey Layout" 
