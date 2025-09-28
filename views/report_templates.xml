@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Register the Spacey Layout in the system -->
-        <record id="report_layout_spacey" model="report.layout">
-            <field name="name">Spacey Layout</field>
-            <field name="view_id" ref="external_layout_spacey"/>
-            <field name="image">/dh_efficient_layout/static/description/layout_spacey.png</field>
-            <field name="pdf">/dh_efficient_layout/static/description/layout_spacey.pdf</field>
-        </record>
-
-        <!-- Spacey Layout Template - Based on Clean layout structure -->
+        <!-- Spacey Layout Template - Define template FIRST before referencing it -->
         <template id="external_layout_spacey">
             <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
                 <div class="o_spacey_header">
@@ -193,6 +185,14 @@
                 </t>
             </xpath>
         </template>
+        
+        <!-- Register the Spacey Layout in the system - AFTER templates are defined -->
+        <record id="report_layout_spacey" model="report.layout">
+            <field name="name">Spacey Layout</field>
+            <field name="view_id" ref="external_layout_spacey"/>
+            <field name="image">/dh_efficient_layout/static/description/layout_spacey.png</field>
+            <field name="pdf">/dh_efficient_layout/static/description/layout_spacey.pdf</field>
+        </record>
         
     </data>
 </odoo>
