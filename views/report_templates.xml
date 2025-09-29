@@ -112,12 +112,12 @@
                 <div class="row mt4">
                     <div class="col-8">
                         <div style="display: flex; flex-direction: column;">
-                            <span t-field="company.report_footer" style="margin-bottom: 2px; font-size: 10px;"/>
+                            <span t-field="company.report_footer" style="margin-bottom: 2px; font-size: 15px;"/>
                             <h4 class="mt0 mb0 text-uppercase" t-field="company.report_header" style="font-size: 11px;"/>
                         </div>
                     </div>
                     <div class="col-4 text-right">
-                        <span t-if="report_type == 'pdf'" style="font-size: 10px;">
+                        <span t-if="report_type == 'pdf'" style="font-size: 15px;">
                             Page <span class="page"/> / <span class="topage"/>
                         </span>
                     </div>
