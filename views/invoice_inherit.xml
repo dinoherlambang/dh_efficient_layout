@@ -35,7 +35,7 @@
             <!-- STYLE TABLE HEADER CELLS -->
             <!-- Make header text bold and add padding -->
             <xpath expr="//table[@name='invoice_line_table']//thead//th" position="attributes">
-                <attribute name="style">font-weight: bold; padding: 10px 8px; background-color: #f8f9fa;</attribute>
+                <attribute name="style">font-weight: bold; padding: 8px 8px; background-color: #f8f9fa;</attribute>
             </xpath>
             
             <!-- CUSTOMIZE INVOICE INFORMATIONS SECTION -->
