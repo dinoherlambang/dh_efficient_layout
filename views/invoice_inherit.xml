@@ -37,7 +37,7 @@
             
             <!-- CUSTOMIZE INVOICE INFORMATIONS SECTION -->
             <!-- Replace with spacey 4-column form-style layout for maximum efficiency -->
-            <xpath expr="//div[@id='informations']" position="replace">
+            <xpath expr="//div[div[@name='invoice_date'] or div[@name='due_date'] or div[@name='origin']]" position="replace">
                 <!-- <div id="informations" class="mt16 mb16" style="border-top: 1px solid #2C5282; border-bottom: 1px solid #2C5282; padding: 12px 0;"> -->
                 <div id="informations" class="mt16 mb16" style="border-top: 1px solid #2C5282; padding: 12px 0;">
                     
