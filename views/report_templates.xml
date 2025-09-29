@@ -134,6 +134,7 @@
             <!-- Clean footer with reduced thickness and page numbering -->
             <!-- Uses company-specific styling for consistent branding -->
             <!-- Only shows page numbers in PDF mode for better print formatting -->
+            <div t-attf-class="footer o_spacey_footer o_company_#{company.id}_layout">
                 <div class="row mt4">
                     <div class="col-8">
                         <div style="display: flex; flex-direction: column;">
