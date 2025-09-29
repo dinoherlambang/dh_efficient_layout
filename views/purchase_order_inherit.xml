@@ -103,16 +103,7 @@
             </xpath>
             
             <!-- REMOVE ORIGINAL PURCHASE ORDER TITLES -->
-            <!-- Since we moved the titles to the layout header, remove them from here -->
-            <xpath expr="//h2[contains(text(), 'Request for Quotation')]" position="replace">
-                <!-- Title now handled in layout header -->
-            </xpath>
-            <xpath expr="//h2[contains(text(), 'Purchase Order')]" position="replace">
-                <!-- Title now handled in layout header -->
-            </xpath>
-            <xpath expr="//h2[contains(text(), 'Cancelled Purchase Order')]" position="replace">
-                <!-- Title now handled in layout header -->
-            </xpath>
+            <!-- Note: Removed xpath for h2 titles as they may not exist in all Odoo versions -->
             
         </template>
         

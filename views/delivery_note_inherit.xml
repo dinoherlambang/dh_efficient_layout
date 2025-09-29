@@ -85,10 +85,7 @@
             </xpath>
             
             <!-- REMOVE ORIGINAL DELIVERY NOTE TITLE -->
-            <!-- Since we moved the title to the layout header, remove it from here -->
-            <xpath expr="//h2" position="replace">
-                <!-- Title now handled in layout header -->
-            </xpath>
+            <!-- Note: Removed xpath for h2 as it may not exist in all Odoo versions -->
             
         </template>
         
