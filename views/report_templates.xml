@@ -173,41 +173,85 @@
                     
                     /* Invoice/document tables styling - simplified to match original */
                     
-                    /* ===== TABLE STYLING ===== */
-                    /* Professional table formatting for invoice lines, order items, etc. */
-                    /* Creates clean, structured appearance for data presentation */
-                    /* OPTIMIZED: Reduced margins for more compact spacing */
-                    &amp;.o_report_layout_spacey table {
-                        border-collapse: collapse;  /* Prevents double borders */
-                        width: 100%;
-                        margin: 5px 0;  /* Reduced from 10px to 5px for tighter layout */
+                    /* ===== AGGRESSIVE TABLE STYLING ===== */
+                    /* Override ALL possible Odoo table styling with maximum specificity */
+                    html body div.o_report_layout_spacey table,
+                    html body .article.o_report_layout_spacey table,
+                    html body .o_report_layout_spacey table,
+                    body .o_report_layout_spacey table,
+                    .o_report_layout_spacey table {
+                        border-collapse: collapse !important;
+                        width: 100% !important;
+                        margin: 5px 0 !important;
+                        border: none !important;
                     }
                     
-                    /* ===== TABLE HEADERS ===== */
-                    /* Header cells with company secondary color for professional look */
-                    /* Used in invoice line headers, totals sections, etc. */
-                    &amp;.o_report_layout_spacey table thead tr th {
-                        border-top: 2px solid <t t-esc='secondary'/> !important;     /* Top border in company color */
-                        border-bottom: 1px solid <t t-esc='secondary'/> !important;  /* Bottom border in company color */
-                        padding: 4px 5px;      /* Reduced padding for cleaner look */
-                        font-weight: bold;
-                        color: <t t-esc='secondary'/>;  /* Text color matches company branding */
-                        font-size: 12px;
-                        line-height: 1.2;
+                    /* Force header styling on ALL table headers */
+                    html body div.o_report_layout_spacey table thead tr th,
+                    html body .article.o_report_layout_spacey table thead tr th,
+                    html body .o_report_layout_spacey table thead tr th,
+                    html body div.o_report_layout_spacey table th,
+                    html body .article.o_report_layout_spacey table th,
+                    html body .o_report_layout_spacey table th,
+                    body .o_report_layout_spacey table thead tr th,
+                    body .o_report_layout_spacey table th,
+                    .o_report_layout_spacey table thead tr th,
+                    .o_report_layout_spacey table th {
+                        border-top: 2px solid <t t-esc='secondary'/> !important;
+                        border-bottom: 1px solid <t t-esc='secondary'/> !important;
+                        border-left: none !important;
+                        border-right: none !important;
+                        padding: 4px 5px !important;
+                        font-weight: bold !important;
+                        color: <t t-esc='secondary'/> !important;
+                        font-size: 12px !important;
+                        line-height: 1.2 !important;
+                        background: none !important;
+                        background-color: transparent !important;
                     }
                     
                     /* ===== TABLE DATA CELLS ===== */
-                    /* Body content with reduced padding for compact, professional appearance */
-                    /* Applied to invoice line items, order details, totals, etc. */
-                    &amp;.o_report_layout_spacey table tbody tr td {
-                        padding: 4px 5px;      /* Reduced from default 8px for tighter layout */
-                        font-size: 12px;
-                        line-height: 1.2;
-                    }                    &amp;.o_report_layout_spacey table tbody tr:last-child td {
+                    /* Force data cell styling with maximum specificity */
+                    html body div.o_report_layout_spacey table tbody tr td,
+                    html body .article.o_report_layout_spacey table tbody tr td,
+                    html body .o_report_layout_spacey table tbody tr td,
+                    html body div.o_report_layout_spacey table td,
+                    html body .article.o_report_layout_spacey table td,
+                    html body .o_report_layout_spacey table td,
+                    body .o_report_layout_spacey table tbody tr td,
+                    body .o_report_layout_spacey table td,
+                    .o_report_layout_spacey table tbody tr td,
+                    .o_report_layout_spacey table td {
+                        padding: 4px 5px !important;
+                        font-size: 12px !important;
+                        line-height: 1.2 !important;
+                        border-left: none !important;
+                        border-right: none !important;
+                        border-top: none !important;
+                        border-bottom: none !important;
+                    }
+                    
+                    /* ===== LAST ROW BORDER ===== */
+                    /* Force bottom border for the last invoice line item with maximum specificity */
+                    html body div.o_report_layout_spacey table tbody tr:last-child td,
+                    html body .article.o_report_layout_spacey table tbody tr:last-child td,
+                    html body .o_report_layout_spacey table tbody tr:last-child td,
+                    body .o_report_layout_spacey table tbody tr:last-child td,
+                    .o_report_layout_spacey table tbody tr:last-child td {
                         border-bottom: 2px solid <t t-esc='secondary'/> !important;
-                        padding: 4px 5px;
-                        font-size: 12px;
-                        line-height: 1.2;
+                        padding: 4px 5px !important;
+                        font-size: 12px !important;
+                        line-height: 1.2 !important;
+                    }
+                    /* Bottom border for the last invoice line item */
+                    .o_report_layout_spacey table tbody tr:last-child td,
+                    &amp;.o_report_layout_spacey table tbody tr:last-child td,
+                    .o_report_layout_spacey .table tbody tr:last-child td,
+                    &amp;.o_report_layout_spacey .table tbody tr:last-child td {
+                        border-bottom: 2px solid <t t-esc='secondary'/> !important;
+                        padding: 4px 5px !important;
+                        font-size: 12px !important;
+                        line-height: 1.2 !important;
                     }
                     
                     /* ===== TOTAL AMOUNTS SECTION ===== */
