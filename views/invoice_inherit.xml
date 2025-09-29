@@ -22,7 +22,7 @@
             
             <!-- DISABLE OLD ADDRESS SECTION -->
             <!-- Make the old address format empty -->
-            <xpath expr="//t[@t-set='address']" position="replace">
+            <xpath expr="//address" position="replace">
                 <!-- Old address section disabled - now handled in Spacey Layout header -->
             </xpath>
             
