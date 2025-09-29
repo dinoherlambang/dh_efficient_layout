@@ -28,31 +28,33 @@
                                 <t t-if="o._name == 'stock.picking'">Delivery Note</t>
                                 
                                 <!-- Account Move (Invoice) with States -->
-                                <t t-elif="o._name == 'account.move'">
-                                    <span t-if="o.type == 'out_invoice' and o.state == 'posted'">Invoice</span>
-                                    <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Invoice</span>
-                                    <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice</span>
-                                    <span t-if="o.type == 'out_refund'">Credit Note</span>
-                                    <span t-if="o.type == 'in_refund'">Vendor Credit Note</span>
-                                    <span t-if="o.type == 'in_invoice'">Vendor Bill</span>
+                                <t t-if="o._name == 'account.move'">
+                                    <t t-if="o.type == 'out_invoice' and o.state == 'posted'">Invoice</t>
+                                    <t t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Invoice</t>
+                                    <t t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice</t>
+                                    <t t-if="o.type == 'out_refund'">Credit Note</t>
+                                    <t t-if="o.type == 'in_refund'">Vendor Credit Note</t>
+                                    <t t-if="o.type == 'in_invoice'">Vendor Bill</t>
+                                    <t t-if="o.type not in ['out_invoice', 'out_refund', 'in_refund', 'in_invoice']">Invoice</t>
                                 </t>
                                 
                                 <!-- Sale Order with States -->
-                                <t t-elif="o._name == 'sale.order'">
-                                    <span t-if="o.state in ['draft', 'sent']">Quotation</span>
-                                    <span t-if="o.state not in ['draft', 'sent']">Sales Order</span>
+                                <t t-if="o._name == 'sale.order'">
+                                    <t t-if="o.state in ['draft', 'sent']">Quotation</t>
+                                    <t t-if="o.state not in ['draft', 'sent']">Sales Order</t>
                                 </t>
                                 
                                 <!-- Purchase Order with States -->
-                                <t t-elif="o._name == 'purchase.order'">
-                                    <span t-if="o.state == 'draft'">Request for Quotation</span>
-                                    <span t-if="o.state in ['sent', 'to approve']">Purchase Order</span>
-                                    <span t-if="o.state in ['purchase', 'done']">Purchase Order</span>
-                                    <span t-if="o.state == 'cancel'">Cancelled Purchase Order</span>
+                                <t t-if="o._name == 'purchase.order'">
+                                    <t t-if="o.state == 'draft'">Request for Quotation</t>
+                                    <t t-if="o.state in ['sent', 'to approve']">Purchase Order</t>
+                                    <t t-if="o.state in ['purchase', 'done']">Purchase Order</t>
+                                    <t t-if="o.state == 'cancel'">Cancelled Purchase Order</t>
+                                    <t t-if="o.state not in ['draft', 'sent', 'to approve', 'purchase', 'done', 'cancel']">Purchase Order</t>
                                 </t>
                                 
                                 <!-- Default -->
-                                <t t-else="">Document</t>
+                                <t t-if="o._name not in ['stock.picking', 'account.move', 'sale.order', 'purchase.order']">Document</t>
                             </h2>
                             <!-- Document Number -->
                             <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
