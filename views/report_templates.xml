@@ -68,7 +68,7 @@
                         <div class="col-3" name="company_address" style="text-align: right;">
                             <div style="font-size: 12px; line-height: 1.3;">
                                 <!-- Company Name (bold and larger) -->
-                                <div t-if="company.name" style="font-weight: bold; font-size: 13px; color: #2C5282; margin-bottom: 2px;">
+                                <div t-if="company.name" style="font-weight: bold; font-size: 15px; color: #2C5282; margin-bottom: 2px;">
                                     <span t-field="company.name"/>
                                 </div>
                                 <!-- Company Tax ID/VAT Number -->

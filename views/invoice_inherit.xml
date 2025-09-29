@@ -35,7 +35,7 @@
                     <div class="row mb-2" t-if="o.invoice_date or (o.invoice_date_due and o.type == 'out_invoice' and o.state == 'posted')">
                         <!-- Invoice Date Label -->
                         <div class="col-3" t-if="o.invoice_date">
-                            <strong style="color: #2C5282; font-size: 13px;">
+                            <strong style="color: #2C5282; font-size: 15px;">
                                 <t t-if="o.type == 'out_invoice'">Invoice Date:</t>
                                 <t t-elif="o.type == 'out_refund'">Credit Note Date:</t>
                                 <t t-else="">Date:</t>
@@ -43,16 +43,16 @@
                         </div>
                         <!-- Invoice Date Value -->
                         <div class="col-3" t-if="o.invoice_date">
-                            <span style="font-size: 13px;" t-field="o.invoice_date"/>
+                            <span style="font-size: 15px;" t-field="o.invoice_date"/>
                         </div>
                         
                         <!-- Due Date Label -->
                         <div class="col-3" t-if="o.invoice_date_due and o.type == 'out_invoice' and o.state == 'posted'">
-                            <strong style="color: #2C5282; font-size: 13px;">Due Date:</strong>
+                            <strong style="color: #2C5282; font-size: 15px;">Due Date:</strong>
                         </div>
                         <!-- Due Date Value -->
                         <div class="col-3" t-if="o.invoice_date_due and o.type == 'out_invoice' and o.state == 'posted'">
-                            <span style="font-size: 13px;" t-field="o.invoice_date_due"/>
+                            <span style="font-size: 15px;" t-field="o.invoice_date_due"/>
                         </div>
                         
                         <!-- Fill remaining columns if only one field exists -->
@@ -64,20 +64,20 @@
                     <div class="row mb-2" t-if="o.invoice_origin or o.partner_id">
                         <!-- Source Label -->
                         <div class="col-3" t-if="o.invoice_origin">
-                            <strong style="color: #2C5282; font-size: 13px;">Source:</strong>
+                            <strong style="color: #2C5282; font-size: 15px;">Source:</strong>
                         </div>
                         <!-- Source Value -->
                         <div class="col-3" t-if="o.invoice_origin">
-                            <span style="font-size: 13px;" t-field="o.invoice_origin"/>
+                            <span style="font-size: 15px;" t-field="o.invoice_origin"/>
                         </div>
                         
                         <!-- Customer Label -->
                         <div class="col-3" t-if="o.partner_id">
-                            <strong style="color: #2C5282; font-size: 13px;">Customer:</strong>
+                            <strong style="color: #2C5282; font-size: 15px;">Customer:</strong>
                         </div>
                         <!-- Customer Value -->
                         <div class="col-3" t-if="o.partner_id">
-                            <span style="font-size: 13px;" t-field="o.partner_id.name"/>
+                            <span style="font-size: 15px;" t-field="o.partner_id.name"/>
                         </div>
                         
                         <!-- Fill remaining columns if only one field exists -->
@@ -89,20 +89,20 @@
                     <div class="row mb-2" t-if="o.partner_id.ref or o.ref">
                         <!-- Customer Code Label -->
                         <div class="col-3" t-if="o.partner_id.ref">
-                            <strong style="color: #2C5282; font-size: 13px;">Customer Code:</strong>
+                            <strong style="color: #2C5282; font-size: 15px;">Customer Code:</strong>
                         </div>
                         <!-- Customer Code Value -->
                         <div class="col-3" t-if="o.partner_id.ref">
-                            <span style="font-size: 13px;" t-field="o.partner_id.ref"/>
+                            <span style="font-size: 15px;" t-field="o.partner_id.ref"/>
                         </div>
                         
                         <!-- Reference Label -->
                         <div class="col-3" t-if="o.ref">
-                            <strong style="color: #2C5282; font-size: 13px;">Reference:</strong>
+                            <strong style="color: #2C5282; font-size: 15px;">Reference:</strong>
                         </div>
                         <!-- Reference Value -->
                         <div class="col-3" t-if="o.ref">
-                            <span style="font-size: 13px;" t-field="o.ref"/>
+                            <span style="font-size: 15px;" t-field="o.ref"/>
                         </div>
                         
                         <!-- Fill remaining columns if only one field exists -->
@@ -113,10 +113,10 @@
                     <!-- FOURTH ROW: Customer Address (spans full width for long addresses) -->
                     <div class="row" t-if="o.partner_id">
                         <div class="col-3">
-                            <strong style="color: #2C5282; font-size: 13px;">Address:</strong>
+                            <strong style="color: #2C5282; font-size: 15px;">Address:</strong>
                         </div>
                         <div class="col-9">
-                            <span style="font-size: 13px;">
+                            <span style="font-size: 15px;">
                                 <t t-if="o.partner_id.street"><span t-field="o.partner_id.street"/></t><t t-if="o.partner_id.street2">, <span t-field="o.partner_id.street2"/></t><t t-if="o.partner_id.city">, <span t-field="o.partner_id.city"/></t><t t-if="o.partner_id.state_id"> <span t-field="o.partner_id.state_id.name"/></t><t t-if="o.partner_id.zip"> <span t-field="o.partner_id.zip"/></t><t t-if="o.partner_id.country_id">, <span t-field="o.partner_id.country_id.name"/></t>
                             </span>
                         </div>

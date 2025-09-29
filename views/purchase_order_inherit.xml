@@ -29,23 +29,23 @@
                     <div class="row mb-2" t-if="o.user_id or (o.state in ['purchase','done'] and o.date_approve) or o.date_order">
                         <!-- Purchase Representative Label -->
                         <div class="col-3" t-if="o.user_id">
-                            <strong style="color: #2C5282; font-size: 13px;">Purchase Rep:</strong>
+                            <strong style="color: #2C5282; font-size: 15px;">Purchase Rep:</strong>
                         </div>
                         <!-- Purchase Representative Value -->
                         <div class="col-3" t-if="o.user_id">
-                            <span style="font-size: 13px;" t-field="o.user_id"/>
+                            <span style="font-size: 15px;" t-field="o.user_id"/>
                         </div>
                         
                         <!-- Order Date/Deadline Label -->
                         <div class="col-3" t-if="(o.state in ['purchase','done'] and o.date_approve) or o.date_order">
-                            <strong style="color: #2C5282; font-size: 13px;">
+                            <strong style="color: #2C5282; font-size: 15px;">
                                 <t t-if="o.state in ['purchase','done'] and o.date_approve">Order Date:</t>
                                 <t t-else="">Order Deadline:</t>
                             </strong>
                         </div>
                         <!-- Order Date/Deadline Value -->
                         <div class="col-3" t-if="(o.state in ['purchase','done'] and o.date_approve) or o.date_order">
-                            <span style="font-size: 13px;">
+                            <span style="font-size: 15px;">
                                 <t t-if="o.state in ['purchase','done'] and o.date_approve">
                                     <span t-field="o.date_approve"/>
                                 </t>
@@ -64,11 +64,11 @@
                     <div class="row mb-2" t-if="o.partner_ref">
                         <!-- Vendor Reference Label -->
                         <div class="col-3">
-                            <strong style="color: #2C5282; font-size: 13px;">Your Order Ref:</strong>
+                            <strong style="color: #2C5282; font-size: 15px;">Your Order Ref:</strong>
                         </div>
                         <!-- Vendor Reference Value -->
                         <div class="col-3">
-                            <span style="font-size: 13px;" t-field="o.partner_ref"/>
+                            <span style="font-size: 15px;" t-field="o.partner_ref"/>
                         </div>
                         
                         <!-- Fill remaining columns -->
@@ -78,10 +78,10 @@
                     <!-- THIRD ROW: Vendor Address (spans full width) -->
                     <div class="row" t-if="o.partner_id">
                         <div class="col-3">
-                            <strong style="color: #2C5282; font-size: 13px;">Vendor:</strong>
+                            <strong style="color: #2C5282; font-size: 15px;">Vendor:</strong>
                         </div>
                         <div class="col-9">
-                            <span style="font-size: 13px;">
+                            <span style="font-size: 15px;">
                                 <span t-field="o.partner_id.name"/><t t-if="o.partner_id.street">, <span t-field="o.partner_id.street"/></t><t t-if="o.partner_id.street2">, <span t-field="o.partner_id.street2"/></t><t t-if="o.partner_id.city">, <span t-field="o.partner_id.city"/></t><t t-if="o.partner_id.state_id"> <span t-field="o.partner_id.state_id.name"/></t><t t-if="o.partner_id.zip"> <span t-field="o.partner_id.zip"/></t><t t-if="o.partner_id.country_id">, <span t-field="o.partner_id.country_id.name"/></t>
                             </span>
                         </div>
