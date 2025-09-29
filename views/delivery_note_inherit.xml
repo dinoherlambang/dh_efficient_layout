@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- 
+        DELIVERY NOTE TEMPLATE INHERITANCE FOR SPACEY LAYOUT
+        
+        This file inherits the standard Odoo delivery note template to customize
+        the formatting and positioning of delivery note-specific elements when
+        using the Spacey Layout.
+        
+        Original template: stock.report_delivery_document
+        Location: /usr/lib/python3/dist-packages/odoo/addons/stock/report/report_deliveryslip.xml
+        -->
+        
+        <template id="report_delivery_document_spacey" inherit_id="stock.report_delivery_document">
+            
+            <!-- CUSTOMIZE DELIVERY NOTE INFORMATIONS SECTION -->
+            <!-- Add a structured informations section similar to other documents -->
+            <xpath expr="//div[@class='row mt32 mb32']" position="replace">
+                <div id="informations" class="row mt32 mb32" style="border: 1px solid #2C5282; border-radius: 8px; padding: 20px; background-color: #f8f9fa;">
+                    
+                    <!-- Source Order - Enhanced styling -->
+                    <div class="col-md-6 col-sm-6 mb-3" t-if="o.origin" name="div_origin">
+                        <div style="text-align: center; padding: 10px;">
+                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">Source Order</strong>
+                            <p class="m-0" style="font-size: 13px; font-weight: 500;" t-field="o.origin"/>
+                        </div>
+                    </div>
+                    
+                    <!-- Shipping Date - Enhanced styling -->
+                    <div class="col-md-6 col-sm-6 mb-3" t-if="o.state" name="div_sched_date">
+                        <div style="text-align: center; padding: 10px;">
+                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">Shipping Date</strong>
+                            <p class="m-0" style="font-size: 13px; font-weight: 500;">
+                                <t t-if="o.state == 'done'">
+                                    <span t-field="o.date_done"/>
+                                </t>
+                                <t t-if="o.state != 'done'">
+                                    <span t-field="o.scheduled_date"/>
+                                </t>
+                            </p>
+                        </div>
+                    </div>
+                    
+                </div>
+            </xpath>
+            
+            <!-- REMOVE ORIGINAL DELIVERY NOTE TITLE -->
+            <!-- Since we moved the title to the layout header, remove it from here -->
+            <xpath expr="//h2" position="replace">
+                <!-- Title now handled in layout header -->
+            </xpath>
+            
+        </template>
+        
+    </data>
+</odoo>

@@ -37,9 +37,17 @@ No complex configuration needed - uses Odoo's standard layout selection mechanis
     'depends': [
         'base',
         'web',
+        'account',  # Required for invoice template inheritance
+        'sale',     # Required for sales order template inheritance
+        'purchase', # Required for purchase order template inheritance
+        'stock',    # Required for delivery note template inheritance
     ],
     'data': [
         'views/report_templates.xml',
+        'views/invoice_inherit.xml',
+        'views/sale_order_inherit.xml',
+        'views/purchase_order_inherit.xml',
+        'views/delivery_note_inherit.xml',
     ],
     'installable': True,
     'auto_install': False,

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- 
+        INVOICE TEMPLATE INHERITANCE FOR SPACEY LAYOUT
+        
+        This file inherits the standard Odoo invoice template to customize
+        the formatting and positioning of invoice-specific elements when
+        using the Spacey Layout.
+        
+        Original template: account.report_invoice_document
+        Location: /usr/lib/python3/dist-packages/odoo/addons/account/views/report_invoice.xml
+        -->
+        
+        <template id="report_invoice_document_spacey" inherit_id="account.report_invoice_document">
+            
+            <!-- CUSTOMIZE INVOICE INFORMATIONS SECTION -->
+            <!-- Replace the standard informations layout with spacey-styled version -->
+            <xpath expr="//div[@id='informations']" position="replace">
+                <div id="informations" class="row mt32 mb32" style="border: 1px solid #2C5282; border-radius: 8px; padding: 20px; background-color: #f8f9fa;">
+                    
+                    <!-- Invoice Date - Enhanced styling -->
+                    <div class="col-md-4 col-sm-6 mb-3" t-if="o.invoice_date" name="invoice_date">
+                        <div style="text-align: center; padding: 10px;">
+                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">
+                                <t t-if="o.type == 'out_invoice'">Invoice Date</t>
+                                <t t-elif="o.type == 'out_refund'">Credit Note Date</t>
+                                <t t-else="">Date</t>
+                            </strong>
+                            <p class="m-0" style="font-size: 13px; font-weight: 500;" t-field="o.invoice_date"/>
+                        </div>
+                    </div>
+                    
+                    <!-- Due Date - Enhanced styling -->
+                    <div class="col-md-4 col-sm-6 mb-3" t-if="o.invoice_date_due and o.type == 'out_invoice' and o.state == 'posted'" name="due_date">
+                        <div style="text-align: center; padding: 10px;">
+                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">Due Date</strong>
+                            <p class="m-0" style="font-size: 13px; font-weight: 500;" t-field="o.invoice_date_due"/>
+                        </div>
+                    </div>
+                    
+                    <!-- Source - Enhanced styling -->
+                    <div class="col-md-4 col-sm-6 mb-3" t-if="o.invoice_origin" name="origin">
+                        <div style="text-align: center; padding: 10px;">
+                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">Source</strong>
+                            <p class="m-0" style="font-size: 13px; font-weight: 500;" t-field="o.invoice_origin"/>
+                        </div>
+                    </div>
+                    
+                    <!-- Customer Code - Enhanced styling -->
+                    <div class="col-md-4 col-sm-6 mb-3" t-if="o.partner_id.ref" name="customer_code">
+                        <div style="text-align: center; padding: 10px;">
+                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">Customer Code</strong>
+                            <p class="m-0" style="font-size: 13px; font-weight: 500;" t-field="o.partner_id.ref"/>
+                        </div>
+                    </div>
+                    
+                    <!-- Reference - Enhanced styling -->
+                    <div class="col-md-4 col-sm-6 mb-3" t-if="o.ref" name="reference">
+                        <div style="text-align: center; padding: 10px;">
+                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">Reference</strong>
+                            <p class="m-0" style="font-size: 13px; font-weight: 500;" t-field="o.ref"/>
+                        </div>
+                    </div>
+                    
+                </div>
+            </xpath>
+            
+            <!-- REMOVE ORIGINAL INVOICE TITLE -->
+            <!-- Since we moved the title to the layout header, remove it from here -->
+            <xpath expr="//h2" position="replace">
+                <!-- Title now handled in layout header -->
+            </xpath>
+            
+        </template>
+        
+    </data>
+</odoo>

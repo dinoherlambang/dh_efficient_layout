@@ -1,53 +1,86 @@
 # DH Efficient Layout
 
-Professional document layout for Odoo 13 reports.
+Professional document layout system for Odoo 13 reports with comprehensive document inheritance.
 
 ## Overview
 
-This module provides a professional **Spacey Layout** option for Odoo reports that features enhanced visual design and follows Odoo's standard layout implementation patterns. The layout includes a sophisticated 3-section header, clean content formatting, and simplified footer design.
+This module provides a complete **Spacey Layout** system for Odoo reports that features enhanced visual design, document-specific formatting inheritance, and follows Odoo's standard layout implementation patterns. The system includes a sophisticated 3-section header, document-specific content formatting, and simplified footer design with comprehensive inheritance for all major Odoo document types.
 
 ## Features
 
-### Spacey Layout
+### Complete Document System
+- **Comprehensive Inheritance**: Dedicated formatting for all major document types
+  - **Invoices & Credit Notes**: Enhanced informations section with Invoice Date, Due Date, Source, Customer Code, Reference
+  - **Sales Orders & Quotations**: Professional layout with Customer Reference, Order Date, Salesperson, Expiration Date
+  - **Purchase Orders & RFQs**: Structured formatting with Purchase Representative, Vendor Reference, Order Date
+  - **Delivery Notes**: Clean presentation with Source Order and Shipping Date information
+- **Document-Specific Styling**: Each document type has tailored formatting while maintaining visual consistency
+- **Modular Architecture**: Separate inheritance files for easy maintenance and extensibility
+
+### Spacey Layout Core Features
 - **Professional 3-section header design:**
   - **Left**: Company Logo with optimal sizing
-  - **Center**: Document title with enhanced typography (18px, uppercase, blue color #2C5282)
+  - **Center**: Document title with enhanced typography and state-aware detection (18px, uppercase, blue color #2C5282)
   - **Right**: Company information with right-aligned layout and refined typography
-- **Smart document type detection:**
-  - Stock Operations (Transfer, Delivery, Receipt)
-  - Account Documents (Invoice, Credit Note, Vendor Bill, etc.)
-  - Sales Orders and Purchase Orders
-  - Generic document fallback with consistent styling
+- **Smart document type and state detection:**
+  - **Account Documents**: Invoice, Draft Invoice, Cancelled Invoice, Credit Note, Vendor Credit Note, Vendor Bill
+  - **Sales Documents**: Quotation (draft/sent), Sales Order (confirmed)
+  - **Purchase Documents**: Request for Quotation (draft), Purchase Order (sent/confirmed), Cancelled Purchase Order
+  - **Stock Operations**: Delivery Note (all picking types)
+  - **Generic Documents**: Automatic fallback with consistent styling
+- **Enhanced Document Headers**: All document titles and numbers appear in the unified header (no duplication)
 - **Clean footer design:**
   - **Merged layout**: Combined company information (8 columns)
   - **Simple page numbering**: "Page X / Y" format without decorations (4 columns)
   - **Minimal styling**: No borders, boxes, or unnecessary decorations
-- **Content formatting system:**
-  - **Professional table styling**: Matches Clean layout standards
-  - **Dynamic color scheme**: Uses company's primary (#2C5282) and secondary colors
-  - **Bootstrap integration**: Responsive grid system with proper spacing
-  - **Print optimization**: Enhanced readability for PDF generation
+
+### Document Content Formatting
+- **Bordered Information Sections**: Professional containers with company color borders and subtle backgrounds
+- **Centered Field Layout**: All field labels and values are center-aligned for clean presentation
+- **Responsive Grid System**: Automatic column adjustment (col-md-4, col-sm-6) for optimal display
+- **Enhanced Typography**: Consistent field label styling with company colors (#2C5282)
+- **Professional Table Styling**: Clean borders and formatting that matches modern design standards
+- **Company Color Integration**: Dynamic color scheme using company's primary and secondary colors
 
 ## Installation
 
 1. Copy this module to your Odoo addons directory
 2. Update the apps list in Odoo
 3. Install the "DH Efficient Layout" module
+4. **Dependencies**: The module automatically handles dependencies for `account`, `sale`, `purchase`, and `stock` modules for comprehensive document support
 
 ## Usage
 
 1. Go to **Settings** > **Companies** > **Configure Document Layout**
 2. Select **"Spacey Layout"** from the available options
-3. The selected layout will be automatically applied to all reports
+3. The selected layout will be automatically applied to all reports with document-specific formatting
 
-## Supported Document Types
+## Supported Document Types with Inheritance
 
-The layout automatically detects and formats these document types with consistent styling:
-- **Account Documents**: Invoices, Bills, Credit Notes, Refunds
-- **Sales Documents**: Sales Orders, Quotations
-- **Purchase Documents**: Purchase Orders, Requests for Quotation
-- **Stock Operations**: Delivery Orders, Receipts, Internal Transfers
-- **Generic Documents**: Automatic fallback with professional formatting
+The layout system provides dedicated inheritance and formatting for these document types:
+
+### Account Module Documents
+- **Invoices**: Enhanced informations section with Invoice Date, Due Date, Source, Customer Code, Reference
+- **Credit Notes**: Professional formatting with Credit Note Date and relevant fields
+- **Vendor Bills**: Structured layout with vendor-specific information
+- **Draft/Cancelled States**: Proper state indication in document headers
+
+### Sales Module Documents  
+- **Sales Orders**: Professional layout with Customer Reference, Order Date, Salesperson, Expiration Date
+- **Quotations**: Clean presentation with quotation-specific fields and expiration dates
+- **State-Aware Headers**: Automatic detection between Quotations and confirmed Sales Orders
+
+### Purchase Module Documents
+- **Purchase Orders**: Structured formatting with Purchase Representative, Vendor Reference, Order Date/Deadline
+- **Requests for Quotation**: Professional RFQ layout with appropriate field presentation
+- **State Detection**: Automatic handling of draft, sent, confirmed, and cancelled states
+
+### Stock Module Documents
+- **Delivery Notes**: Clean presentation with Source Order and Shipping Date information
+- **All Picking Types**: Universal formatting for deliveries, receipts, and internal transfers
+
+### Fallback Support
+- **Generic Documents**: Professional formatting for any other document types using the layout system
 
 ## Content Formatting System
 
@@ -91,8 +124,13 @@ dh_efficient_layout/
 ├── __init__.py
 ├── __manifest__.py
 ├── README.md
+├── INHERITANCE_SUMMARY.md
 └── views/
-    └── report_templates.xml
+    ├── report_templates.xml      # Main Spacey Layout template
+    ├── invoice_inherit.xml       # Invoice & Credit Note inheritance
+    ├── sale_order_inherit.xml    # Sales Order & Quotation inheritance
+    ├── purchase_order_inherit.xml # Purchase Order & RFQ inheritance
+    └── delivery_note_inherit.xml # Delivery Note inheritance
 ```
 
 ## Customization
@@ -114,20 +152,94 @@ The template includes comprehensive CSS rules in `views/report_templates.xml`:
 ### Document Type Detection
 Add or modify document type detection logic in the template's conditional blocks:
 ```xml
+### Document Type Detection
+Add or modify document type detection logic in the template's conditional blocks:
+```xml
 <t t-if="o._name == 'your.custom.model'">
     <!-- Custom document type handling -->
 </t>
 ```
 
+## Document Inheritance System
+
+### Architecture Overview
+The module uses a **modular inheritance architecture** where each document type has its own dedicated inheritance file. This approach provides:
+
+- **Separation of Concerns**: Each document type's formatting is isolated in its own file
+- **Easy Maintenance**: Changes to one document type don't affect others  
+- **Extensibility**: New document types can be easily added without modifying existing templates
+- **Consistency**: All documents share the unified header/footer while having customized content areas
+
+### Inheritance Files and Their Purpose
+
+#### `invoice_inherit.xml` - Account Module Documents
+- **Inherits**: `account.report_invoice_document`
+- **Customizes**: Invoice Date, Due Date, Source, Customer Code, Reference fields
+- **Removes**: Original invoice title (moved to header)
+- **Styling**: Bordered information section with centered field layout
+
+#### `sale_order_inherit.xml` - Sales Module Documents  
+- **Inherits**: `sale.report_saleorder_document`
+- **Customizes**: Customer Reference, Order/Quotation Date, Expiration, Salesperson
+- **Handles**: State detection between quotations and confirmed orders
+- **Removes**: Original sales order title (moved to header)
+
+#### `purchase_order_inherit.xml` - Purchase Module Documents
+- **Inherits**: `purchase.report_purchaseorder_document` 
+- **Customizes**: Purchase Representative, Vendor Reference, Order Date/Deadline
+- **Handles**: Multiple purchase order states and title variations
+- **Removes**: All original purchase order titles (moved to header)
+
+#### `delivery_note_inherit.xml` - Stock Module Documents
+- **Inherits**: `stock.report_delivery_document`
+- **Customizes**: Source Order, Shipping Date information
+- **Adds**: Professional information section structure (original has minimal formatting)
+- **Removes**: Original delivery note title (moved to header)
+
+### Header Integration
+All document titles and states are now handled in the **main layout header** (`report_templates.xml`):
+
+```xml
+<!-- Account Move (Invoice) with States -->
+<t t-elif="o._name == 'account.move'">
+    <span t-if="o.type == 'out_invoice' and o.state == 'posted'">Invoice</span>
+    <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Invoice</span>
+    <!-- ... more states ... -->
+</t>
+
+<!-- Sales Order with States -->
+<t t-elif="o._name == 'sale.order'">
+    <span t-if="o.state in ['draft', 'sent']">Quotation</span>
+    <span t-if="o.state not in ['draft', 'sent']">Sales Order</span>
+</t>
+
+<!-- Purchase Order with States -->
+<t t-elif="o._name == 'purchase.order'">
+    <span t-if="o.state == 'draft'">Request for Quotation</span>
+    <span t-if="o.state in ['sent', 'to approve']">Purchase Order</span>
+    <!-- ... more states ... -->
+</t>
+```
+
+This unified approach ensures:
+- **No Title Duplication**: Document titles appear only in the header
+- **Consistent Positioning**: All document types show their title in the same location
+- **State Awareness**: Headers automatically reflect document states (Draft, Posted, Cancelled, etc.)
+- **Professional Appearance**: Clean document body focused on content rather than redundant titles
+
+## Development Notes
+```
+
 ## Technical Details
 
 - **Odoo Version**: 13.0+ (Community and Enterprise)
-- **Dependencies**: `base`, `web` (standard Odoo core modules)
+- **Dependencies**: `base`, `web`, `account`, `sale`, `purchase`, `stock` (handles all major document types)
 - **License**: LGPL-3
 - **Template ID**: `external_layout_spacey`
 - **Model Integration**: `report.layout` (standard Odoo layout system)
 - **CSS Integration**: `web.styles_company_report` (dynamic styling system)
 - **Color System**: Uses company primary (#2C5282 default) and secondary colors
+- **Architecture**: Modular inheritance system with separate files for each document type
 
 ## Development Notes
 

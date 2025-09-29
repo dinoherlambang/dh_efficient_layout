@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- 
+        SALES ORDER TEMPLATE INHERITANCE FOR SPACEY LAYOUT
+        
+        This file inherits the standard Odoo sales order template to customize
+        the formatting and positioning of sales order-specific elements when
+        using the Spacey Layout.
+        
+        Original template: sale.report_saleorder_document
+        Location: /usr/lib/python3/dist-packages/odoo/addons/sale/report/sale_report_templates.xml
+        -->
+        
+        <template id="report_saleorder_document_spacey" inherit_id="sale.report_saleorder_document">
+            
+            <!-- CUSTOMIZE SALES ORDER INFORMATIONS SECTION -->
+            <!-- Replace the standard informations layout with spacey-styled version -->
+            <xpath expr="//div[@id='informations']" position="replace">
+                <div id="informations" class="row mt32 mb32" style="border: 1px solid #2C5282; border-radius: 8px; padding: 20px; background-color: #f8f9fa;">
+                    
+                    <!-- Customer Reference - Enhanced styling -->
+                    <div class="col-md-4 col-sm-6 mb-3" t-if="doc.client_order_ref" name="client_order_ref">
+                        <div style="text-align: center; padding: 10px;">
+                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">Your Reference</strong>
+                            <p class="m-0" style="font-size: 13px; font-weight: 500;" t-field="doc.client_order_ref"/>
+                        </div>
+                    </div>
+                    
+                    <!-- Order/Quotation Date - Enhanced styling -->
+                    <div class="col-md-4 col-sm-6 mb-3" t-if="doc.date_order" name="date_order">
+                        <div style="text-align: center; padding: 10px;">
+                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">
+                                <t t-if="doc.state not in ['draft','sent']">Order Date</t>
+                                <t t-else="">Quotation Date</t>
+                            </strong>
+                            <p class="m-0" style="font-size: 13px; font-weight: 500;">
+                                <t t-if="doc.state not in ['draft','sent']">
+                                    <span t-field="doc.date_order"/>
+                                </t>
+                                <t t-else="">
+                                    <span t-field="doc.date_order" t-options='{"widget": "date"}'/>
+                                </t>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Expiration Date - Enhanced styling -->
+                    <div class="col-md-4 col-sm-6 mb-3" t-if="doc.validity_date and doc.state in ['draft', 'sent']" name="expiration_date">
+                        <div style="text-align: center; padding: 10px;">
+                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">Expiration</strong>
+                            <p class="m-0" style="font-size: 13px; font-weight: 500;" t-field="doc.validity_date"/>
+                        </div>
+                    </div>
+                    
+                    <!-- Salesperson - Enhanced styling -->
+                    <div class="col-md-4 col-sm-6 mb-3" t-if="doc.user_id.name" name="salesperson">
+                        <div style="text-align: center; padding: 10px;">
+                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">Salesperson</strong>
+                            <p class="m-0" style="font-size: 13px; font-weight: 500;" t-field="doc.user_id"/>
+                        </div>
+                    </div>
+                    
+                </div>
+            </xpath>
+            
+            <!-- REMOVE ORIGINAL SALES ORDER TITLE -->
+            <!-- Since we moved the title to the layout header, remove it from here -->
+            <xpath expr="//h2[@class='mt16']" position="replace">
+                <!-- Title now handled in layout header -->
+            </xpath>
+            
+        </template>
+        
+    </data>
+</odoo>

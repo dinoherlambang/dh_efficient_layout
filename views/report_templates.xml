@@ -20,14 +20,38 @@
                         <div class="col-6 text-center" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 60px;">
                             <!-- DOCUMENT TYPE DETECTION -->
                             <!-- Automatically detects what type of document is being printed -->
-                            <!-- and shows appropriate title (INVOICE, DELIVERY NOTE, etc.) -->
+                            <!-- and shows appropriate title with specific states for invoices -->
                             
-                            <!-- Document Title - QWeb Compatible Logic -->
+                            <!-- Document Title - Enhanced QWeb Compatible Logic -->
                             <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">
+                                <!-- Stock Picking -->
                                 <t t-if="o._name == 'stock.picking'">Delivery Note</t>
-                                <t t-elif="o._name == 'account.move'">Invoice</t>
-                                <t t-elif="o._name == 'sale.order'">Sales Order</t>
-                                <t t-elif="o._name == 'purchase.order'">Purchase Order</t>
+                                
+                                <!-- Account Move (Invoice) with States -->
+                                <t t-elif="o._name == 'account.move'">
+                                    <span t-if="o.type == 'out_invoice' and o.state == 'posted'">Invoice</span>
+                                    <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Invoice</span>
+                                    <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice</span>
+                                    <span t-if="o.type == 'out_refund'">Credit Note</span>
+                                    <span t-if="o.type == 'in_refund'">Vendor Credit Note</span>
+                                    <span t-if="o.type == 'in_invoice'">Vendor Bill</span>
+                                </t>
+                                
+                                <!-- Sale Order with States -->
+                                <t t-elif="o._name == 'sale.order'">
+                                    <span t-if="o.state in ['draft', 'sent']">Quotation</span>
+                                    <span t-if="o.state not in ['draft', 'sent']">Sales Order</span>
+                                </t>
+                                
+                                <!-- Purchase Order with States -->
+                                <t t-elif="o._name == 'purchase.order'">
+                                    <span t-if="o.state == 'draft'">Request for Quotation</span>
+                                    <span t-if="o.state in ['sent', 'to approve']">Purchase Order</span>
+                                    <span t-if="o.state in ['purchase', 'done']">Purchase Order</span>
+                                    <span t-if="o.state == 'cancel'">Cancelled Purchase Order</span>
+                                </t>
+                                
+                                <!-- Default -->
                                 <t t-else="">Document</t>
                             </h2>
                             <!-- Document Number -->
@@ -68,19 +92,6 @@
             </div>
 
             <!-- ===== DOCUMENT BODY/CONTENT AREA ===== -->
-            <!-- This is where the actual document content (invoice lines, totals, etc.) is rendered -->
-            <!-- Uses standard Odoo structure for maximum compatibility with existing reports -->
-            <!-- 
-                IMPORTANT CLASSES:
-                - article class: o_report_layout_spacey (triggers our custom CSS styling rules)
-                - o_company_{company.id}_layout: Company-specific styling hooks for colors/fonts
-                - data-oe-* attributes: Enable editing capabilities in backend
-                - web.address_layout: Renders partner/company address information
-                - t-raw="0": Injects the actual document content (invoice lines, totals, etc.)
-                
-                Content formatting (table styling, colors, borders) is controlled by CSS rules
-                defined in the spacey_layout_styles template below.
-            -->
             <div t-attf-class="article o_report_layout_spacey o_company_#{company.id}_layout" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
                 <!-- Address Layout: Company address information (used by some document types) -->
                 <t t-call="web.address_layout"/>
@@ -114,167 +125,8 @@
 
         </template>
 
-        <!-- ===== CSS STYLING SECTION ===== -->
-        <!-- 
-        SPACEY LAYOUT CSS RULES AND STYLING
         
-        This template dynamically generates CSS styles for the Spacey layout by inheriting 
-        from web.styles_company_report, which is Odoo's main CSS generator system.
         
-        HOW THE CSS GENERATION WORKS:
-        1. When a company selects "Spacey Layout", Odoo calls this template
-        2. The CSS is generated with company-specific colors and styling
-        3. Document content gets class="o_report_layout_spacey" to trigger these rules
-        4. Company colors (primary/secondary) are used for consistent branding
-        
-        IMPORTANT CSS FEATURES:
-        - Table Styling: Professional borders and header coloring
-        - Typography: Company colors for headings and emphasis text
-        - Layout Spacing: Optimized margins and padding for clean appearance
-        - Total Sections: Special formatting for invoice/order totals
-        - Print Compatibility: Styles work well in both screen and PDF output
-        
-        NOTE: All CSS selectors are "flattened" (no nesting) to prevent SCSS 
-        compilation errors when mixed with QWeb template variables.
-        -->
-        <template id="spacey_layout_styles" inherit_id="web.styles_company_report">
-            <xpath expr="//t[@t-if=&quot;layout == 'web.external_layout_background'&quot;]" position="after">
-                <!-- CONDITIONAL CSS GENERATION -->
-                <!-- Only generates these styles when Spacey Layout is selected for a company -->
-                <!-- The condition checks if current layout matches our template ID -->
-                <t t-if="layout == 'dh_efficient_layout.external_layout_spacey'">
-                    /* ===== FOOTER STYLING ===== */
-                    /* Creates a clean, thin footer with company branding color */
-                    /* OPTIMIZED: Reduced spacing for more compact layout */
-                    &amp;.o_spacey_footer {
-                        border-top: 1px solid <t t-esc='secondary'/>;  /* Company secondary color border */
-                        margin-top: 10px;      /* Reduced from 15px to 10px */
-                        padding-top: 6px;      /* Reduced from 8px to 6px */
-                    }
-                    /* Footer headings use secondary color for consistency */
-                    &amp;.o_spacey_footer h4 {
-                        color: <t t-esc='secondary'/>;
-                    }
-                    
-                    /* ===== DOCUMENT HEADINGS ===== */
-                    /* Main document titles (h1, h2, h3) use company primary color */
-                    /* Applied to all content within o_report_layout_spacey class */
-                    &amp;.o_report_layout_spacey h1,
-                    &amp;.o_report_layout_spacey h2,
-                    &amp;.o_report_layout_spacey h3 {
-                        color: <t t-esc='primary'/>;  /* Company primary color */
-                    }
-                    
-                    /* ===== TEXT EMPHASIS ===== */
-                    /* Strong/bold text uses secondary color for visual hierarchy */
-                    &amp;.o_report_layout_spacey strong {
-                        color: <t t-esc='secondary'/>;  /* Company secondary color */
-                    }
-                    
-                    /* Invoice/document tables styling - simplified to match original */
-                    
-                    /* ===== TABLE STYLING ===== */
-                    /* Professional table formatting for invoice lines, order items, etc. */
-                    /* Creates clean, structured appearance for data presentation */
-                    /* OPTIMIZED: Reduced margins for more compact spacing */
-                    &amp;.o_report_layout_spacey table {
-                        border-collapse: collapse;  /* Prevents double borders */
-                        width: 100%;
-                        margin: 5px 0;  /* Reduced from 10px to 5px for tighter layout */
-                    }
-                    
-                    /* ===== TABLE HEADERS ===== */
-                    /* Header cells with company secondary color for professional look */
-                    /* Used in invoice line headers, totals sections, etc. */
-                    &amp;.o_report_layout_spacey table thead tr th {
-                        border-top: 2px solid <t t-esc='secondary'/> !important;     /* Top border in company color */
-                        border-bottom: 1px solid <t t-esc='secondary'/> !important;  /* Bottom border in company color */
-                        padding: 4px 5px;      /* Reduced padding for cleaner look */
-                        font-weight: bold;
-                        color: <t t-esc='secondary'/>;  /* Text color matches company branding */
-                        font-size: 12px;
-                        line-height: 1.2;
-                    }
-                    
-                    /* ===== TABLE DATA CELLS ===== */
-                    /* Body content with reduced padding for compact, professional appearance */
-                    /* Applied to invoice line items, order details, totals, etc. */
-                    &amp;.o_report_layout_spacey table tbody tr td {
-                        padding: 4px 5px;      /* Reduced from default 8px for tighter layout */
-                        font-size: 12px;
-                        line-height: 1.2;
-                    }                    &amp;.o_report_layout_spacey table tbody tr:last-child td {
-                        border-bottom: 2px solid <t t-esc='secondary'/> !important;
-                        padding: 4px 5px;
-                        font-size: 12px;
-                        line-height: 1.2;
-                    }
-                    
-                    /* ===== TOTAL AMOUNTS SECTION ===== */
-                    /* Special styling for invoice totals, order totals, etc. */
-                    /* Creates visual separation and emphasis for important financial data */
-                    /* OPTIMIZED: Reduced spacing for more compact layout */
-                    &amp;.o_report_layout_spacey #total {
-                        border-top: 1px solid <t t-esc='secondary'/>;  /* Top border in company color */
-                        margin-top: 8px;        /* Reduced from 15px to 8px for tighter spacing */
-                        padding-top: 6px;       /* Reduced from 10px to 6px */
-                    }
-                    
-                    /* Total amounts text uses secondary color for emphasis */
-                    &amp;.o_report_layout_spacey #total strong {
-                        color: <t t-esc='secondary'/>;  /* Company secondary color */
-                    }
-                    
-                    /* ===== PAGE LAYOUT ===== */
-                    /* Content padding for proper spacing within document bounds */
-                    /* Ensures content doesn't touch page edges */
-                    /* OPTIMIZED: Reduced padding for more content space */
-                    &amp;.o_report_layout_spacey .page {
-                        padding: 0 12px;       /* Reduced from 15px to 12px for more content width */
-                    }
-                    
-                    /* ===== INFORMATION SECTIONS ===== */
-                    /* Styling for document information blocks (terms, notes, etc.) */
-                    /* Creates proper spacing and color coordination */
-                    /* OPTIMIZED: Reduced margins for more compact layout */
-                    &amp;.o_report_layout_spacey #informations {
-                        margin: 12px 0;        /* Reduced from 20px to 12px for tighter spacing */
-                    }
-                    
-                    /* Information headings use secondary color for consistency */
-                    &amp;.o_report_layout_spacey #informations strong {
-                        color: <t t-esc='secondary'/>;  /* Company secondary color */
-                    }
-                    
-                    /* ===== COMPACT SPACING OPTIMIZATIONS ===== */
-                    /* Remove unwanted lines and optimize spacing for maximum content area */
-                    
-                    /* Remove unnecessary horizontal dividers and lines */
-                    &amp;.o_report_layout_spacey hr,
-                    &amp;.o_report_layout_spacey .o_clean_header hr,
-                    &amp;.o_report_layout_spacey .address hr {
-                        display: none;  /* Hide unwanted horizontal lines */
-                    }
-                    
-                    /* Optimize header spacing for more compact layout */
-                    &amp;.o_report_layout_spacey .o_spacey_header {
-                        margin-bottom: 8px;    /* Reduced header bottom margin */
-                        padding-bottom: 5px;   /* Minimal padding */
-                    }
-                    
-                    /* Reduce spacing between document sections */
-                    &amp;.o_report_layout_spacey .row {
-                        margin-bottom: 4px;    /* Tighter row spacing */
-                    }
-                    
-                    /* Optimize address block spacing */
-                    &amp;.o_report_layout_spacey address {
-                        margin-bottom: 8px;    /* Reduced address block spacing */
-                        line-height: 1.3;      /* Tighter line spacing */
-                    }
-                </t>
-            </xpath>
-        </template>
         
         <!-- ===== LAYOUT REGISTRATION ===== -->
         <!-- Register the Spacey Layout in Odoo's layout system -->
