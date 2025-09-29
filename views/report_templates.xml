@@ -21,57 +21,56 @@
                         <!-- Shows document type (INVOICE/DELIVERY NOTE) and document number -->
                         <!-- Takes 1/2 of header width, centered both horizontally and vertically -->
                         <div class="col-6 text-center" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 60px;">
-                            <t t-if="o and o._name">
-                                <!-- DOCUMENT TYPE DETECTION -->
-                                <!-- Automatically detects what type of document is being printed -->
-                                <!-- and shows appropriate title (INVOICE, DELIVERY NOTE, etc.) -->
-                                
-                                <!-- FOR DELIVERY NOTES / STOCK TRANSFERS -->
-                                <t t-if="o._name == 'stock.picking'">
-                                    <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">
-                                        <!-- Fixed title: Always shows "DELIVERY NOTE" regardless of picking type -->
-                                        Delivery Note
-                                    </h2>
-                                    <!-- Document Number (e.g., WH/OUT/00001) -->
-                                    <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
-                                        <span t-field="o.name"/>
-                                    </p>
-                                </t>
-                                
-                                <!-- FOR INVOICES / ACCOUNTING DOCUMENTS -->
-                                <t t-elif="o._name == 'account.move'">
-                                    <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">
-                                        <!-- Fixed title: Always shows "INVOICE" for compatibility across Odoo versions -->
-                                        Invoice
-                                    </h2>
-                                    <!-- Invoice Number (e.g., INV/2025/00001) -->
-                                    <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
-                                        <span t-field="o.name"/>
-                                    </p>
-                                </t>
-                                
-                                <!-- FOR SALES ORDERS -->
-                                <t t-elif="o._name == 'sale.order'">
-                                    <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">Sales Order</h2>
-                                    <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
-                                        <span t-field="o.name"/>
-                                    </p>
-                                </t>
-                                <!-- FOR PURCHASE ORDERS -->
-                                <t t-elif="o._name == 'purchase.order'">
-                                    <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">Purchase Order</h2>
-                                    <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
-                                        <span t-field="o.name"/>
-                                    </p>
-                                </t>
-                                
-                                <!-- FALLBACK FOR OTHER DOCUMENT TYPES -->
-                                <t t-else="">
-                                    <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">Document</h2>
-                                    <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
-                                        <span t-field="o.name"/>
-                                    </p>
-                                </t>
+                            <!-- DOCUMENT TYPE DETECTION -->
+                            <!-- Automatically detects what type of document is being printed -->
+                            <!-- and shows appropriate title (INVOICE, DELIVERY NOTE, etc.) -->
+                            
+                            <!-- FOR DELIVERY NOTES / STOCK TRANSFERS -->
+                            <t t-if="o and o._name == 'stock.picking'">
+                                <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">
+                                    <!-- Fixed title: Always shows "DELIVERY NOTE" regardless of picking type -->
+                                    Delivery Note
+                                </h2>
+                                <!-- Document Number (e.g., WH/OUT/00001) -->
+                                <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
+                                    <span t-field="o.name"/>
+                                </p>
+                            </t>
+                            
+                            <!-- FOR INVOICES / ACCOUNTING DOCUMENTS -->
+                            <t t-if="o and o._name == 'account.move'">
+                                <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">
+                                    <!-- Fixed title: Always shows "INVOICE" for compatibility across Odoo versions -->
+                                    Invoice
+                                </h2>
+                                <!-- Invoice Number (e.g., INV/2025/00001) -->
+                                <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
+                                    <span t-field="o.name"/>
+                                </p>
+                            </t>
+                            
+                            <!-- FOR SALES ORDERS -->
+                            <t t-if="o and o._name == 'sale.order'">
+                                <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">Sales Order</h2>
+                                <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
+                                    <span t-field="o.name"/>
+                                </p>
+                            </t>
+                            
+                            <!-- FOR PURCHASE ORDERS -->
+                            <t t-if="o and o._name == 'purchase.order'">
+                                <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">Purchase Order</h2>
+                                <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
+                                    <span t-field="o.name"/>
+                                </p>
+                            </t>
+                            
+                            <!-- FALLBACK FOR OTHER DOCUMENT TYPES -->
+                            <t t-if="o and o._name and o._name not in ['stock.picking', 'account.move', 'sale.order', 'purchase.order']">
+                                <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">Document</h2>
+                                <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
+                                    <span t-field="o.name"/>
+                                </p>
                             </t>
                         </div>
                         
