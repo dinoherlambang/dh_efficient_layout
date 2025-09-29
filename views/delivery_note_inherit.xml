@@ -15,30 +15,51 @@
         <template id="report_delivery_document_spacey" inherit_id="stock.report_delivery_document">
             
             <!-- CUSTOMIZE DELIVERY NOTE INFORMATIONS SECTION -->
-            <!-- Add a structured informations section similar to other documents -->
+            <!-- Replace with spacey 4-column form-style layout for maximum efficiency -->
             <xpath expr="//div[@class='row mt32 mb32']" position="replace">
-                <div id="informations" class="row mt32 mb32" style="border: 1px solid #2C5282; border-radius: 8px; padding: 20px; background-color: #f8f9fa;">
+                <div id="informations" class="mt16 mb16" style="border: 1px solid #2C5282; border-radius: 6px; padding: 15px; background-color: #f8f9fa;">
                     
-                    <!-- Source Order - Enhanced styling -->
-                    <div class="col-md-6 col-sm-6 mb-3" t-if="o.origin" name="div_origin">
-                        <div style="text-align: center; padding: 10px;">
-                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">Source Order</strong>
-                            <p class="m-0" style="font-size: 13px; font-weight: 500;" t-field="o.origin"/>
+                    <!-- FIRST ROW: Source Order | Value | Shipping Date | Value -->
+                    <div class="row mb-2" t-if="o.origin or o.state">
+                        <!-- Source Order Label -->
+                        <div class="col-3" t-if="o.origin">
+                            <strong style="color: #2C5282; font-size: 13px;">Source Order:</strong>
                         </div>
-                    </div>
-                    
-                    <!-- Shipping Date - Enhanced styling -->
-                    <div class="col-md-6 col-sm-6 mb-3" t-if="o.state" name="div_sched_date">
-                        <div style="text-align: center; padding: 10px;">
-                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">Shipping Date</strong>
-                            <p class="m-0" style="font-size: 13px; font-weight: 500;">
+                        <!-- Source Order Value -->
+                        <div class="col-3" t-if="o.origin">
+                            <span style="font-size: 13px;" t-field="o.origin"/>
+                        </div>
+                        
+                        <!-- Shipping Date Label -->
+                        <div class="col-3" t-if="o.state">
+                            <strong style="color: #2C5282; font-size: 13px;">Shipping Date:</strong>
+                        </div>
+                        <!-- Shipping Date Value -->
+                        <div class="col-3" t-if="o.state">
+                            <span style="font-size: 13px;">
                                 <t t-if="o.state == 'done'">
                                     <span t-field="o.date_done"/>
                                 </t>
                                 <t t-if="o.state != 'done'">
                                     <span t-field="o.scheduled_date"/>
                                 </t>
-                            </p>
+                            </span>
+                        </div>
+                        
+                        <!-- Fill remaining columns if only one field exists -->
+                        <div class="col-6" t-if="o.origin and not o.state"></div>
+                        <div class="col-6" t-if="not o.origin and o.state"></div>
+                    </div>
+                    
+                    <!-- SECOND ROW: Destination Address (spans full width) -->
+                    <div class="row" t-if="o.partner_id">
+                        <div class="col-3">
+                            <strong style="color: #2C5282; font-size: 13px;">Destination:</strong>
+                        </div>
+                        <div class="col-9">
+                            <span style="font-size: 13px;">
+                                <span t-field="o.partner_id.name"/><t t-if="o.partner_id.street">, <span t-field="o.partner_id.street"/></t><t t-if="o.partner_id.street2">, <span t-field="o.partner_id.street2"/></t><t t-if="o.partner_id.city">, <span t-field="o.partner_id.city"/></t><t t-if="o.partner_id.state_id"> <span t-field="o.partner_id.state_id.name"/></t><t t-if="o.partner_id.zip"> <span t-field="o.partner_id.zip"/></t><t t-if="o.partner_id.country_id">, <span t-field="o.partner_id.country_id.name"/></t>
+                            </span>
                         </div>
                     </div>
                     

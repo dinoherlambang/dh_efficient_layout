@@ -15,49 +15,75 @@
         <template id="report_saleorder_document_spacey" inherit_id="sale.report_saleorder_document">
             
             <!-- CUSTOMIZE SALES ORDER INFORMATIONS SECTION -->
-            <!-- Replace the standard informations layout with spacey-styled version -->
+            <!-- Replace with spacey 4-column form-style layout for maximum efficiency -->
             <xpath expr="//div[@id='informations']" position="replace">
-                <div id="informations" class="row mt32 mb32" style="border: 1px solid #2C5282; border-radius: 8px; padding: 20px; background-color: #f8f9fa;">
+                <div id="informations" class="mt16 mb16" style="border: 1px solid #2C5282; border-radius: 6px; padding: 15px; background-color: #f8f9fa;">
                     
-                    <!-- Customer Reference - Enhanced styling -->
-                    <div class="col-md-4 col-sm-6 mb-3" t-if="doc.client_order_ref" name="client_order_ref">
-                        <div style="text-align: center; padding: 10px;">
-                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">Your Reference</strong>
-                            <p class="m-0" style="font-size: 13px; font-weight: 500;" t-field="doc.client_order_ref"/>
-                        </div>
-                    </div>
-                    
-                    <!-- Order/Quotation Date - Enhanced styling -->
-                    <div class="col-md-4 col-sm-6 mb-3" t-if="doc.date_order" name="date_order">
-                        <div style="text-align: center; padding: 10px;">
-                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">
-                                <t t-if="doc.state not in ['draft','sent']">Order Date</t>
-                                <t t-else="">Quotation Date</t>
+                    <!-- FIRST ROW: Order Date | Value | Expiration | Value -->
+                    <div class="row mb-2" t-if="doc.date_order or (doc.validity_date and doc.state in ['draft', 'sent'])">
+                        <!-- Order/Quotation Date Label -->
+                        <div class="col-3" t-if="doc.date_order">
+                            <strong style="color: #2C5282; font-size: 13px;">
+                                <t t-if="doc.state not in ['draft','sent']">Order Date:</t>
+                                <t t-else="">Quotation Date:</t>
                             </strong>
-                            <p class="m-0" style="font-size: 13px; font-weight: 500;">
-                                <t t-if="doc.state not in ['draft','sent']">
-                                    <span t-field="doc.date_order"/>
-                                </t>
-                                <t t-else="">
-                                    <span t-field="doc.date_order" t-options='{"widget": "date"}'/>
-                                </t>
-                            </p>
                         </div>
+                        <!-- Order/Quotation Date Value -->
+                        <div class="col-3" t-if="doc.date_order">
+                            <span style="font-size: 13px;">
+                                <t t-if="doc.state not in ['draft','sent']"><span t-field="doc.date_order"/></t>
+                                <t t-else=""><span t-field="doc.date_order" t-options='{"widget": "date"}'/></t>
+                            </span>
+                        </div>
+                        
+                        <!-- Expiration Date Label -->
+                        <div class="col-3" t-if="doc.validity_date and doc.state in ['draft', 'sent']">
+                            <strong style="color: #2C5282; font-size: 13px;">Expiration:</strong>
+                        </div>
+                        <!-- Expiration Date Value -->
+                        <div class="col-3" t-if="doc.validity_date and doc.state in ['draft', 'sent']">
+                            <span style="font-size: 13px;" t-field="doc.validity_date"/>
+                        </div>
+                        
+                        <!-- Fill remaining columns if only one field exists -->
+                        <div class="col-6" t-if="doc.date_order and not (doc.validity_date and doc.state in ['draft', 'sent'])"></div>
+                        <div class="col-6" t-if="not doc.date_order and (doc.validity_date and doc.state in ['draft', 'sent'])"></div>
                     </div>
                     
-                    <!-- Expiration Date - Enhanced styling -->
-                    <div class="col-md-4 col-sm-6 mb-3" t-if="doc.validity_date and doc.state in ['draft', 'sent']" name="expiration_date">
-                        <div style="text-align: center; padding: 10px;">
-                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">Expiration</strong>
-                            <p class="m-0" style="font-size: 13px; font-weight: 500;" t-field="doc.validity_date"/>
+                    <!-- SECOND ROW: Customer Reference | Value | Salesperson | Value -->
+                    <div class="row mb-2" t-if="doc.client_order_ref or doc.user_id.name">
+                        <!-- Customer Reference Label -->
+                        <div class="col-3" t-if="doc.client_order_ref">
+                            <strong style="color: #2C5282; font-size: 13px;">Your Reference:</strong>
                         </div>
+                        <!-- Customer Reference Value -->
+                        <div class="col-3" t-if="doc.client_order_ref">
+                            <span style="font-size: 13px;" t-field="doc.client_order_ref"/>
+                        </div>
+                        
+                        <!-- Salesperson Label -->
+                        <div class="col-3" t-if="doc.user_id.name">
+                            <strong style="color: #2C5282; font-size: 13px;">Salesperson:</strong>
+                        </div>
+                        <!-- Salesperson Value -->
+                        <div class="col-3" t-if="doc.user_id.name">
+                            <span style="font-size: 13px;" t-field="doc.user_id"/>
+                        </div>
+                        
+                        <!-- Fill remaining columns if only one field exists -->
+                        <div class="col-6" t-if="doc.client_order_ref and not doc.user_id.name"></div>
+                        <div class="col-6" t-if="not doc.client_order_ref and doc.user_id.name"></div>
                     </div>
                     
-                    <!-- Salesperson - Enhanced styling -->
-                    <div class="col-md-4 col-sm-6 mb-3" t-if="doc.user_id.name" name="salesperson">
-                        <div style="text-align: center; padding: 10px;">
-                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">Salesperson</strong>
-                            <p class="m-0" style="font-size: 13px; font-weight: 500;" t-field="doc.user_id"/>
+                    <!-- THIRD ROW: Customer Address (spans full width) -->
+                    <div class="row" t-if="doc.partner_id">
+                        <div class="col-3">
+                            <strong style="color: #2C5282; font-size: 13px;">Customer:</strong>
+                        </div>
+                        <div class="col-9">
+                            <span style="font-size: 13px;">
+                                <span t-field="doc.partner_id.name"/><t t-if="doc.partner_id.street">, <span t-field="doc.partner_id.street"/></t><t t-if="doc.partner_id.street2">, <span t-field="doc.partner_id.street2"/></t><t t-if="doc.partner_id.city">, <span t-field="doc.partner_id.city"/></t><t t-if="doc.partner_id.state_id"> <span t-field="doc.partner_id.state_id.name"/></t><t t-if="doc.partner_id.zip"> <span t-field="doc.partner_id.zip"/></t><t t-if="doc.partner_id.country_id">, <span t-field="doc.partner_id.country_id.name"/></t>
+                            </span>
                         </div>
                     </div>
                     

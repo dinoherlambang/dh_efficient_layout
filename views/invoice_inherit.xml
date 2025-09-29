@@ -15,51 +15,98 @@
         <template id="report_invoice_document_spacey" inherit_id="account.report_invoice_document">
             
             <!-- CUSTOMIZE INVOICE INFORMATIONS SECTION -->
-            <!-- Replace the standard informations layout with spacey-styled version -->
+            <!-- Replace with spacey 4-column form-style layout for maximum efficiency -->
             <xpath expr="//div[@id='informations']" position="replace">
-                <div id="informations" class="row mt32 mb32" style="border: 1px solid #2C5282; border-radius: 8px; padding: 20px; background-color: #f8f9fa;">
+                <div id="informations" class="mt16 mb16" style="border: 1px solid #2C5282; border-radius: 6px; padding: 15px; background-color: #f8f9fa;">
                     
-                    <!-- Invoice Date - Enhanced styling -->
-                    <div class="col-md-4 col-sm-6 mb-3" t-if="o.invoice_date" name="invoice_date">
-                        <div style="text-align: center; padding: 10px;">
-                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">
-                                <t t-if="o.type == 'out_invoice'">Invoice Date</t>
-                                <t t-elif="o.type == 'out_refund'">Credit Note Date</t>
-                                <t t-else="">Date</t>
+                    <!-- FIRST ROW: Invoice Date | Value | Due Date | Value -->
+                    <div class="row mb-2" t-if="o.invoice_date or (o.invoice_date_due and o.type == 'out_invoice' and o.state == 'posted')">
+                        <!-- Invoice Date Label -->
+                        <div class="col-3" t-if="o.invoice_date">
+                            <strong style="color: #2C5282; font-size: 13px;">
+                                <t t-if="o.type == 'out_invoice'">Invoice Date:</t>
+                                <t t-elif="o.type == 'out_refund'">Credit Note Date:</t>
+                                <t t-else="">Date:</t>
                             </strong>
-                            <p class="m-0" style="font-size: 13px; font-weight: 500;" t-field="o.invoice_date"/>
                         </div>
+                        <!-- Invoice Date Value -->
+                        <div class="col-3" t-if="o.invoice_date">
+                            <span style="font-size: 13px;" t-field="o.invoice_date"/>
+                        </div>
+                        
+                        <!-- Due Date Label -->
+                        <div class="col-3" t-if="o.invoice_date_due and o.type == 'out_invoice' and o.state == 'posted'">
+                            <strong style="color: #2C5282; font-size: 13px;">Due Date:</strong>
+                        </div>
+                        <!-- Due Date Value -->
+                        <div class="col-3" t-if="o.invoice_date_due and o.type == 'out_invoice' and o.state == 'posted'">
+                            <span style="font-size: 13px;" t-field="o.invoice_date_due"/>
+                        </div>
+                        
+                        <!-- Fill remaining columns if only one field exists -->
+                        <div class="col-6" t-if="o.invoice_date and not (o.invoice_date_due and o.type == 'out_invoice' and o.state == 'posted')"></div>
+                        <div class="col-6" t-if="not o.invoice_date and (o.invoice_date_due and o.type == 'out_invoice' and o.state == 'posted')"></div>
                     </div>
                     
-                    <!-- Due Date - Enhanced styling -->
-                    <div class="col-md-4 col-sm-6 mb-3" t-if="o.invoice_date_due and o.type == 'out_invoice' and o.state == 'posted'" name="due_date">
-                        <div style="text-align: center; padding: 10px;">
-                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">Due Date</strong>
-                            <p class="m-0" style="font-size: 13px; font-weight: 500;" t-field="o.invoice_date_due"/>
+                    <!-- SECOND ROW: Source | Value | Customer Address | Value -->
+                    <div class="row mb-2" t-if="o.invoice_origin or o.partner_id">
+                        <!-- Source Label -->
+                        <div class="col-3" t-if="o.invoice_origin">
+                            <strong style="color: #2C5282; font-size: 13px;">Source:</strong>
                         </div>
+                        <!-- Source Value -->
+                        <div class="col-3" t-if="o.invoice_origin">
+                            <span style="font-size: 13px;" t-field="o.invoice_origin"/>
+                        </div>
+                        
+                        <!-- Customer Label -->
+                        <div class="col-3" t-if="o.partner_id">
+                            <strong style="color: #2C5282; font-size: 13px;">Customer:</strong>
+                        </div>
+                        <!-- Customer Value -->
+                        <div class="col-3" t-if="o.partner_id">
+                            <span style="font-size: 13px;" t-field="o.partner_id.name"/>
+                        </div>
+                        
+                        <!-- Fill remaining columns if only one field exists -->
+                        <div class="col-6" t-if="o.invoice_origin and not o.partner_id"></div>
+                        <div class="col-6" t-if="not o.invoice_origin and o.partner_id"></div>
                     </div>
                     
-                    <!-- Source - Enhanced styling -->
-                    <div class="col-md-4 col-sm-6 mb-3" t-if="o.invoice_origin" name="origin">
-                        <div style="text-align: center; padding: 10px;">
-                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">Source</strong>
-                            <p class="m-0" style="font-size: 13px; font-weight: 500;" t-field="o.invoice_origin"/>
+                    <!-- THIRD ROW: Customer Code | Value | Reference | Value -->
+                    <div class="row mb-2" t-if="o.partner_id.ref or o.ref">
+                        <!-- Customer Code Label -->
+                        <div class="col-3" t-if="o.partner_id.ref">
+                            <strong style="color: #2C5282; font-size: 13px;">Customer Code:</strong>
                         </div>
+                        <!-- Customer Code Value -->
+                        <div class="col-3" t-if="o.partner_id.ref">
+                            <span style="font-size: 13px;" t-field="o.partner_id.ref"/>
+                        </div>
+                        
+                        <!-- Reference Label -->
+                        <div class="col-3" t-if="o.ref">
+                            <strong style="color: #2C5282; font-size: 13px;">Reference:</strong>
+                        </div>
+                        <!-- Reference Value -->
+                        <div class="col-3" t-if="o.ref">
+                            <span style="font-size: 13px;" t-field="o.ref"/>
+                        </div>
+                        
+                        <!-- Fill remaining columns if only one field exists -->
+                        <div class="col-6" t-if="o.partner_id.ref and not o.ref"></div>
+                        <div class="col-6" t-if="not o.partner_id.ref and o.ref"></div>
                     </div>
                     
-                    <!-- Customer Code - Enhanced styling -->
-                    <div class="col-md-4 col-sm-6 mb-3" t-if="o.partner_id.ref" name="customer_code">
-                        <div style="text-align: center; padding: 10px;">
-                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">Customer Code</strong>
-                            <p class="m-0" style="font-size: 13px; font-weight: 500;" t-field="o.partner_id.ref"/>
+                    <!-- FOURTH ROW: Customer Address (spans full width for long addresses) -->
+                    <div class="row" t-if="o.partner_id">
+                        <div class="col-3">
+                            <strong style="color: #2C5282; font-size: 13px;">Address:</strong>
                         </div>
-                    </div>
-                    
-                    <!-- Reference - Enhanced styling -->
-                    <div class="col-md-4 col-sm-6 mb-3" t-if="o.ref" name="reference">
-                        <div style="text-align: center; padding: 10px;">
-                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">Reference</strong>
-                            <p class="m-0" style="font-size: 13px; font-weight: 500;" t-field="o.ref"/>
+                        <div class="col-9">
+                            <span style="font-size: 13px;">
+                                <t t-if="o.partner_id.street"><span t-field="o.partner_id.street"/></t><t t-if="o.partner_id.street2">, <span t-field="o.partner_id.street2"/></t><t t-if="o.partner_id.city">, <span t-field="o.partner_id.city"/></t><t t-if="o.partner_id.state_id"> <span t-field="o.partner_id.state_id.name"/></t><t t-if="o.partner_id.zip"> <span t-field="o.partner_id.zip"/></t><t t-if="o.partner_id.country_id">, <span t-field="o.partner_id.country_id.name"/></t>
+                            </span>
                         </div>
                     </div>
                     

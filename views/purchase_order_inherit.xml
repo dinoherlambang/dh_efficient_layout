@@ -15,41 +15,69 @@
         <template id="report_purchaseorder_document_spacey" inherit_id="purchase.report_purchaseorder_document">
             
             <!-- CUSTOMIZE PURCHASE ORDER INFORMATIONS SECTION -->
-            <!-- Replace the standard informations layout with spacey-styled version -->
+            <!-- Replace with spacey 4-column form-style layout for maximum efficiency -->
             <xpath expr="//div[@id='informations']" position="replace">
-                <div id="informations" class="row mt32 mb32" style="border: 1px solid #2C5282; border-radius: 8px; padding: 20px; background-color: #f8f9fa;">
+                <div id="informations" class="mt16 mb16" style="border: 1px solid #2C5282; border-radius: 6px; padding: 15px; background-color: #f8f9fa;">
                     
-                    <!-- Purchase Representative - Enhanced styling -->
-                    <div class="col-md-4 col-sm-6 mb-3" t-if="o.user_id" name="user_id">
-                        <div style="text-align: center; padding: 10px;">
-                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">Purchase Representative</strong>
-                            <p class="m-0" style="font-size: 13px; font-weight: 500;" t-field="o.user_id"/>
+                    <!-- FIRST ROW: Purchase Representative | Value | Order Date/Deadline | Value -->
+                    <div class="row mb-2" t-if="o.user_id or (o.state in ['purchase','done'] and o.date_approve) or o.date_order">
+                        <!-- Purchase Representative Label -->
+                        <div class="col-3" t-if="o.user_id">
+                            <strong style="color: #2C5282; font-size: 13px;">Purchase Rep:</strong>
                         </div>
-                    </div>
-                    
-                    <!-- Vendor Reference - Enhanced styling -->
-                    <div class="col-md-4 col-sm-6 mb-3" t-if="o.partner_ref" name="partner_ref">
-                        <div style="text-align: center; padding: 10px;">
-                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">Your Order Reference</strong>
-                            <p class="m-0" style="font-size: 13px; font-weight: 500;" t-field="o.partner_ref"/>
+                        <!-- Purchase Representative Value -->
+                        <div class="col-3" t-if="o.user_id">
+                            <span style="font-size: 13px;" t-field="o.user_id"/>
                         </div>
-                    </div>
-                    
-                    <!-- Order Date/Deadline - Enhanced styling -->
-                    <div class="col-md-4 col-sm-6 mb-3" t-if="o.state in ['purchase','done'] and o.date_approve or o.date_order" name="order_date">
-                        <div style="text-align: center; padding: 10px;">
-                            <strong style="color: #2C5282; font-size: 14px; display: block; margin-bottom: 5px;">
-                                <t t-if="o.state in ['purchase','done'] and o.date_approve">Order Date</t>
-                                <t t-else="">Order Deadline</t>
+                        
+                        <!-- Order Date/Deadline Label -->
+                        <div class="col-3" t-if="(o.state in ['purchase','done'] and o.date_approve) or o.date_order">
+                            <strong style="color: #2C5282; font-size: 13px;">
+                                <t t-if="o.state in ['purchase','done'] and o.date_approve">Order Date:</t>
+                                <t t-else="">Order Deadline:</t>
                             </strong>
-                            <p class="m-0" style="font-size: 13px; font-weight: 500;">
+                        </div>
+                        <!-- Order Date/Deadline Value -->
+                        <div class="col-3" t-if="(o.state in ['purchase','done'] and o.date_approve) or o.date_order">
+                            <span style="font-size: 13px;">
                                 <t t-if="o.state in ['purchase','done'] and o.date_approve">
                                     <span t-field="o.date_approve"/>
                                 </t>
                                 <t t-else="">
                                     <span t-field="o.date_order"/>
                                 </t>
-                            </p>
+                            </span>
+                        </div>
+                        
+                        <!-- Fill remaining columns if only one field exists -->
+                        <div class="col-6" t-if="o.user_id and not ((o.state in ['purchase','done'] and o.date_approve) or o.date_order)"></div>
+                        <div class="col-6" t-if="not o.user_id and ((o.state in ['purchase','done'] and o.date_approve) or o.date_order)"></div>
+                    </div>
+                    
+                    <!-- SECOND ROW: Vendor Reference | Value -->
+                    <div class="row mb-2" t-if="o.partner_ref">
+                        <!-- Vendor Reference Label -->
+                        <div class="col-3">
+                            <strong style="color: #2C5282; font-size: 13px;">Your Order Ref:</strong>
+                        </div>
+                        <!-- Vendor Reference Value -->
+                        <div class="col-3">
+                            <span style="font-size: 13px;" t-field="o.partner_ref"/>
+                        </div>
+                        
+                        <!-- Fill remaining columns -->
+                        <div class="col-6"></div>
+                    </div>
+                    
+                    <!-- THIRD ROW: Vendor Address (spans full width) -->
+                    <div class="row" t-if="o.partner_id">
+                        <div class="col-3">
+                            <strong style="color: #2C5282; font-size: 13px;">Vendor:</strong>
+                        </div>
+                        <div class="col-9">
+                            <span style="font-size: 13px;">
+                                <span t-field="o.partner_id.name"/><t t-if="o.partner_id.street">, <span t-field="o.partner_id.street"/></t><t t-if="o.partner_id.street2">, <span t-field="o.partner_id.street2"/></t><t t-if="o.partner_id.city">, <span t-field="o.partner_id.city"/></t><t t-if="o.partner_id.state_id"> <span t-field="o.partner_id.state_id.name"/></t><t t-if="o.partner_id.zip"> <span t-field="o.partner_id.zip"/></t><t t-if="o.partner_id.country_id">, <span t-field="o.partner_id.country_id.name"/></t>
+                            </span>
                         </div>
                     </div>
                     
