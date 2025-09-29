@@ -15,10 +15,7 @@
         <template id="report_delivery_document_spacey" inherit_id="stock.report_delivery_document">
             
             <!-- DISABLE OLD ADDRESS SECTION -->
-            <!-- Make the old address format empty -->
-            <xpath expr="//address" position="replace">
-                <!-- Old address section disabled - now handled in Spacey Layout header -->
-            </xpath>
+            <!-- Note: Address xpath removed for compatibility - addresses handled in Spacey Layout header -->
             
             <!-- STYLE TABLE HEADERS WITH BOLD LINES -->
             <!-- Add bold borders to table headers like Subtotal/Total -->
