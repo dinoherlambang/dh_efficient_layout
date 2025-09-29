@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- SPACEY LAYOUT MAIN TEMPLATE - Define template FIRST before referencing it -->
-        <!-- This is the main layout template that creates the document structure with 3-section header -->
+        <!-- SPACEY LAYOUT MAIN TEMPLATE -->
         <template id="external_layout_spacey">
-            
-            <!-- ===== DOCUMENT HEADER SECTION ===== -->
-            <!-- Creates the top section with 3 columns: Logo | Document Title | Company Info -->
+            <!-- Header Section -->
             <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
                 <div class="o_spacey_header">
                     <div class="row">
@@ -25,53 +22,18 @@
                             <!-- Automatically detects what type of document is being printed -->
                             <!-- and shows appropriate title (INVOICE, DELIVERY NOTE, etc.) -->
                             
-                            <!-- FOR DELIVERY NOTES / STOCK TRANSFERS -->
-                            <t t-if="o and o._name == 'stock.picking'">
-                                <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">
-                                    <!-- Fixed title: Always shows "DELIVERY NOTE" regardless of picking type -->
-                                    Delivery Note
-                                </h2>
-                                <!-- Document Number (e.g., WH/OUT/00001) -->
-                                <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
-                                    <span t-field="o.name"/>
-                                </p>
-                            </t>
-                            
-                            <!-- FOR INVOICES / ACCOUNTING DOCUMENTS -->
-                            <t t-if="o and o._name == 'account.move'">
-                                <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">
-                                    <!-- Fixed title: Always shows "INVOICE" for compatibility across Odoo versions -->
-                                    Invoice
-                                </h2>
-                                <!-- Invoice Number (e.g., INV/2025/00001) -->
-                                <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
-                                    <span t-field="o.name"/>
-                                </p>
-                            </t>
-                            
-                            <!-- FOR SALES ORDERS -->
-                            <t t-if="o and o._name == 'sale.order'">
-                                <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">Sales Order</h2>
-                                <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
-                                    <span t-field="o.name"/>
-                                </p>
-                            </t>
-                            
-                            <!-- FOR PURCHASE ORDERS -->
-                            <t t-if="o and o._name == 'purchase.order'">
-                                <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">Purchase Order</h2>
-                                <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
-                                    <span t-field="o.name"/>
-                                </p>
-                            </t>
-                            
-                            <!-- FALLBACK FOR OTHER DOCUMENT TYPES -->
-                            <t t-if="o and o._name and o._name not in ['stock.picking', 'account.move', 'sale.order', 'purchase.order']">
-                                <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">Document</h2>
-                                <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
-                                    <span t-field="o.name"/>
-                                </p>
-                            </t>
+                            <!-- Document Title - QWeb Compatible Logic -->
+                            <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">
+                                <t t-if="o._name == 'stock.picking'">Delivery Note</t>
+                                <t t-elif="o._name == 'account.move'">Invoice</t>
+                                <t t-elif="o._name == 'sale.order'">Sales Order</t>
+                                <t t-elif="o._name == 'purchase.order'">Purchase Order</t>
+                                <t t-else="">Document</t>
+                            </h2>
+                            <!-- Document Number -->
+                            <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
+                                <span t-field="o.name"/>
+                            </p>
                         </div>
                         
                         <!-- RIGHT COLUMN: Company Information -->
@@ -148,6 +110,8 @@
                     </div>
                 </div>
             </div>
+
+
         </template>
 
         <!-- ===== CSS STYLING SECTION ===== -->
@@ -181,10 +145,11 @@
                 <t t-if="layout == 'dh_efficient_layout.external_layout_spacey'">
                     /* ===== FOOTER STYLING ===== */
                     /* Creates a clean, thin footer with company branding color */
+                    /* OPTIMIZED: Reduced spacing for more compact layout */
                     &amp;.o_spacey_footer {
                         border-top: 1px solid <t t-esc='secondary'/>;  /* Company secondary color border */
-                        margin-top: 15px;
-                        padding-top: 8px;
+                        margin-top: 10px;      /* Reduced from 15px to 10px */
+                        padding-top: 6px;      /* Reduced from 8px to 6px */
                     }
                     /* Footer headings use secondary color for consistency */
                     &amp;.o_spacey_footer h4 {
@@ -211,10 +176,11 @@
                     /* ===== TABLE STYLING ===== */
                     /* Professional table formatting for invoice lines, order items, etc. */
                     /* Creates clean, structured appearance for data presentation */
+                    /* OPTIMIZED: Reduced margins for more compact spacing */
                     &amp;.o_report_layout_spacey table {
                         border-collapse: collapse;  /* Prevents double borders */
                         width: 100%;
-                        margin: 10px 0;  /* Vertical spacing around tables */
+                        margin: 5px 0;  /* Reduced from 10px to 5px for tighter layout */
                     }
                     
                     /* ===== TABLE HEADERS ===== */
@@ -247,10 +213,11 @@
                     /* ===== TOTAL AMOUNTS SECTION ===== */
                     /* Special styling for invoice totals, order totals, etc. */
                     /* Creates visual separation and emphasis for important financial data */
+                    /* OPTIMIZED: Reduced spacing for more compact layout */
                     &amp;.o_report_layout_spacey #total {
                         border-top: 1px solid <t t-esc='secondary'/>;  /* Top border in company color */
-                        margin-top: 15px;       /* Space above totals section */
-                        padding-top: 10px;      /* Space below border */
+                        margin-top: 8px;        /* Reduced from 15px to 8px for tighter spacing */
+                        padding-top: 6px;       /* Reduced from 10px to 6px */
                     }
                     
                     /* Total amounts text uses secondary color for emphasis */
@@ -261,20 +228,49 @@
                     /* ===== PAGE LAYOUT ===== */
                     /* Content padding for proper spacing within document bounds */
                     /* Ensures content doesn't touch page edges */
+                    /* OPTIMIZED: Reduced padding for more content space */
                     &amp;.o_report_layout_spacey .page {
-                        padding: 0 15px;       /* Left and right padding for content */
+                        padding: 0 12px;       /* Reduced from 15px to 12px for more content width */
                     }
                     
                     /* ===== INFORMATION SECTIONS ===== */
                     /* Styling for document information blocks (terms, notes, etc.) */
                     /* Creates proper spacing and color coordination */
+                    /* OPTIMIZED: Reduced margins for more compact layout */
                     &amp;.o_report_layout_spacey #informations {
-                        margin: 20px 0;        /* Vertical spacing around info blocks */
+                        margin: 12px 0;        /* Reduced from 20px to 12px for tighter spacing */
                     }
                     
                     /* Information headings use secondary color for consistency */
                     &amp;.o_report_layout_spacey #informations strong {
                         color: <t t-esc='secondary'/>;  /* Company secondary color */
+                    }
+                    
+                    /* ===== COMPACT SPACING OPTIMIZATIONS ===== */
+                    /* Remove unwanted lines and optimize spacing for maximum content area */
+                    
+                    /* Remove unnecessary horizontal dividers and lines */
+                    &amp;.o_report_layout_spacey hr,
+                    &amp;.o_report_layout_spacey .o_clean_header hr,
+                    &amp;.o_report_layout_spacey .address hr {
+                        display: none;  /* Hide unwanted horizontal lines */
+                    }
+                    
+                    /* Optimize header spacing for more compact layout */
+                    &amp;.o_report_layout_spacey .o_spacey_header {
+                        margin-bottom: 8px;    /* Reduced header bottom margin */
+                        padding-bottom: 5px;   /* Minimal padding */
+                    }
+                    
+                    /* Reduce spacing between document sections */
+                    &amp;.o_report_layout_spacey .row {
+                        margin-bottom: 4px;    /* Tighter row spacing */
+                    }
+                    
+                    /* Optimize address block spacing */
+                    &amp;.o_report_layout_spacey address {
+                        margin-bottom: 8px;    /* Reduced address block spacing */
+                        line-height: 1.3;      /* Tighter line spacing */
                     }
                 </t>
             </xpath>
