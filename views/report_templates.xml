@@ -3,6 +3,23 @@
     <data>
         <!-- SPACEY LAYOUT MAIN TEMPLATE -->
         <template id="external_layout_spacey">
+            <!-- Set object context if not already set -->
+            <t t-if="not o" t-set="o" t-value="doc"/>
+            
+            <!-- Set company context if not already set -->
+            <t t-if="not company">
+                <!-- Multicompany -->
+                <t t-if="company_id">
+                    <t t-set="company" t-value="company_id"/>
+                </t>
+                <t t-elif="o and 'company_id' in o and o.company_id.sudo()">
+                    <t t-set="company" t-value="o.company_id.sudo()"/>
+                </t>
+                <t t-else="else">
+                    <t t-set="company" t-value="res_company"/>
+                </t>
+            </t>
+            
             <!-- Header Section -->
             <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
                 <div class="o_spacey_header">
@@ -25,10 +42,10 @@
                             <!-- Document Title - Enhanced QWeb Compatible Logic -->
                             <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">
                                 <!-- Stock Picking -->
-                                <t t-if="o._name == 'stock.picking'">Delivery Note</t>
+                                <t t-if="o and o._name == 'stock.picking'">Delivery Note</t>
                                 
                                 <!-- Account Move (Invoice) with States -->
-                                <t t-if="o._name == 'account.move'">
+                                <t t-if="o and o._name == 'account.move'">
                                     <t t-if="o.type == 'out_invoice' and o.state == 'posted'">Invoice</t>
                                     <t t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Invoice</t>
                                     <t t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice</t>
@@ -39,13 +56,13 @@
                                 </t>
                                 
                                 <!-- Sale Order with States -->
-                                <t t-if="o._name == 'sale.order'">
+                                <t t-if="o and o._name == 'sale.order'">
                                     <t t-if="o.state in ['draft', 'sent']">Quotation</t>
                                     <t t-if="o.state not in ['draft', 'sent']">Sales Order</t>
                                 </t>
                                 
                                 <!-- Purchase Order with States -->
-                                <t t-if="o._name == 'purchase.order'">
+                                <t t-if="o and o._name == 'purchase.order'">
                                     <t t-if="o.state == 'draft'">Request for Quotation</t>
                                     <t t-if="o.state in ['sent', 'to approve']">Purchase Order</t>
                                     <t t-if="o.state in ['purchase', 'done']">Purchase Order</t>
@@ -54,10 +71,10 @@
                                 </t>
                                 
                                 <!-- Default -->
-                                <t t-if="o._name not in ['stock.picking', 'account.move', 'sale.order', 'purchase.order']">Document</t>
+                                <t t-if="not o or o._name not in ['stock.picking', 'account.move', 'sale.order', 'purchase.order']">Document</t>
                             </h2>
                             <!-- Document Number -->
-                            <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o.name">
+                            <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o and o.name">
                                 <span t-field="o.name"/>
                             </p>
                         </div>

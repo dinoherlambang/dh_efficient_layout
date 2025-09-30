@@ -20,6 +20,35 @@
                 <attribute name="t-call">dh_efficient_layout.external_layout_spacey</attribute>
             </xpath>
             
+            <!-- REMOVE ORIGINAL SALES ORDER TITLE -->
+            <!-- Hide the h2 title - commented out since structure may vary -->
+            
+            <xpath expr="//h2[@class='mt16']" position="replace">
+                <div style="display: none;"></div>
+            </xpath>
+            
+            
+            <!-- REMOVE DUPLICATE PARTNER/ADDRESS INFORMATION -->
+            <!-- Remove partner address div since it's handled in Spacey Layout header -->
+            <!-- Note: These XPath expressions are commented out until we can identify the exact structure -->
+            <!-- 
+            <xpath expr="//div[@t-field='doc.partner_id']" position="replace">
+                <div style="display: none;"/>
+            </xpath>
+            
+            <xpath expr="//div[contains(@class, 'address')]" position="replace">
+                <div style="display: none;"/>
+            </xpath>
+            
+            <xpath expr="//t[@t-if='doc.partner_shipping_id == doc.partner_id']" position="replace">
+                <div style="display: none;"/>
+            </xpath>
+            
+            <xpath expr="//t[@t-if='doc.partner_shipping_id != doc.partner_id']" position="replace">
+                <div style="display: none;"/>
+            </xpath>
+            -->
+            
             <!-- DISABLE OLD ADDRESS SECTION -->
             <!-- Note: Address xpath removed for compatibility - addresses handled in Spacey Layout header -->
             
@@ -109,12 +138,6 @@
                     </div>
                     
                 </div>
-            </xpath>
-            
-            <!-- REMOVE ORIGINAL SALES ORDER TITLE -->
-            <!-- Hide the original document title since it's now in our header -->
-            <xpath expr="//h2[@class='mt16']" position="attributes">
-                <attribute name="style">display: none;</attribute>
             </xpath>
             
         </template>

@@ -20,8 +20,16 @@
                 <attribute name="t-call">dh_efficient_layout.external_layout_spacey</attribute>
             </xpath>
             
-            <!-- DISABLE OLD ADDRESS SECTION -->
-            <!-- Note: Address xpath removed for compatibility - addresses handled in Spacey Layout header -->
+            <!-- REMOVE ORIGINAL INVOICE TITLE -->
+            <xpath expr="//h2" position="replace">
+            </xpath>
+            
+            <!-- REMOVE DUPLICATE PARTNER/ADDRESS INFORMATION -->
+            <!-- Remove the entire address section since it's handled in Spacey Layout header -->
+            <xpath expr="//t[@t-set='address']" position="replace">
+                <div style="display: none;"/>
+            </xpath>
+           
             
             <!-- STYLE TABLE HEADERS WITH BOLD LINES -->
             <!-- Add bold borders to table headers like Subtotal/Total -->
@@ -37,7 +45,7 @@
             
             <!-- CUSTOMIZE INVOICE INFORMATIONS SECTION -->
             <!-- Replace with spacey 4-column form-style layout for maximum efficiency -->
-            <xpath expr="//div[div[@name='invoice_date'] or div[@name='due_date'] or div[@name='origin']]" position="replace">
+            <xpath expr="//div[@id='informations']" position="replace">
                 <!-- <div id="informations" class="mt16 mb16" style="border-top: 1px solid #2C5282; border-bottom: 1px solid #2C5282; padding: 12px 0;"> -->
                 <div id="informations" class="mt16 mb16" style="border-top: 1px solid #2C5282; padding: 12px 0;">
                     
@@ -133,12 +141,6 @@
                     </div>
                     
                 </div>
-            </xpath>
-            
-            <!-- REMOVE ORIGINAL INVOICE TITLE -->
-            <!-- Hide the original document title since it's now in our header -->
-            <xpath expr="//h2[span[@t-if=\"o.type == 'out_invoice' and o.state == 'posted'\"]]" position="attributes">
-                <attribute name="style">display: none;</attribute>
             </xpath>
             
         </template>

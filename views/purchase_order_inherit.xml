@@ -20,6 +20,40 @@
                 <attribute name="t-call">dh_efficient_layout.external_layout_spacey</attribute>
             </xpath>
             
+            <!-- REMOVE ORIGINAL PURCHASE ORDER TITLES -->
+            <!-- Hide all h2 titles - commented out since structure may vary -->
+            
+            <!-- <xpath expr="//h2[@t-if='o.state == &quot;draft&quot;']" position="replace">
+                <div style="display: none;"></div>
+            </xpath>
+            <xpath expr="//h2[@t-if='o.state in [&quot;sent&quot;, &quot;to approve&quot;]']" position="replace">
+                <div style="display: none;"></div>
+            </xpath>
+            <xpath expr="//h2[@t-if='o.state in [&quot;purchase&quot;, &quot;done&quot;]']" position="replace">
+                <div style="display: none;"></div>
+            </xpath>
+            <xpath expr="//h2[@t-if='o.state == &quot;cancel&quot;']" position="replace">
+                <div style="display: none;"></div>
+            </xpath> -->
+            
+            
+            <!-- REMOVE DUPLICATE PARTNER/ADDRESS INFORMATION -->
+            <!-- Remove partner address div since it's handled in Spacey Layout header -->
+            <!-- Note: These XPath expressions are commented out until we can identify the exact structure -->
+            <!-- 
+            <xpath expr="//div[@t-field='o.partner_id']" position="replace">
+                <div style="display: none;"/>
+            </xpath>
+            
+            <xpath expr="//div[contains(@class, 'address')]" position="replace">
+                <div style="display: none;"/>
+            </xpath>
+            
+            <xpath expr="//t[@t-if='o.dest_address_id']" position="replace">
+                <div style="display: none;"/>
+            </xpath>
+            -->
+            
             <!-- DISABLE OLD ADDRESS SECTION -->
             <!-- Note: Address xpath removed for compatibility - addresses handled in Spacey Layout header -->
             
@@ -103,21 +137,6 @@
                     </div>
                     
                 </div>
-            </xpath>
-            
-            <!-- REMOVE ORIGINAL PURCHASE ORDER TITLES -->
-            <!-- Hide all original document titles since they're now in our header -->
-            <xpath expr="//h2[@t-if=\"o.state == 'draft'\"]" position="attributes">
-                <attribute name="style">display: none;</attribute>
-            </xpath>
-            <xpath expr="//h2[@t-if=\"o.state in ['sent', 'to approve']\"]" position="attributes">
-                <attribute name="style">display: none;</attribute>
-            </xpath>
-            <xpath expr="//h2[@t-if=\"o.state in ['purchase', 'done']\"]" position="attributes">
-                <attribute name="style">display: none;</attribute>
-            </xpath>
-            <xpath expr="//h2[@t-if=\"o.state == 'cancel'\"]" position="attributes">
-                <attribute name="style">display: none;</attribute>
             </xpath>
             
         </template>
