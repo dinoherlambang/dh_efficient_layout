@@ -14,6 +14,12 @@
         
         <template id="report_purchaseorder_document_spacey" inherit_id="purchase.report_purchaseorder_document">
             
+            <!-- CHANGE LAYOUT TO SPACEY -->
+            <!-- Replace web.external_layout with our Spacey Layout -->
+            <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
+                <attribute name="t-call">dh_efficient_layout.external_layout_spacey</attribute>
+            </xpath>
+            
             <!-- DISABLE OLD ADDRESS SECTION -->
             <!-- Note: Address xpath removed for compatibility - addresses handled in Spacey Layout header -->
             
@@ -100,7 +106,19 @@
             </xpath>
             
             <!-- REMOVE ORIGINAL PURCHASE ORDER TITLES -->
-            <!-- Note: Removed xpath for h2 titles as they may not exist in all Odoo versions -->
+            <!-- Hide all original document titles since they're now in our header -->
+            <xpath expr="//h2[@t-if=\"o.state == 'draft'\"]" position="attributes">
+                <attribute name="style">display: none;</attribute>
+            </xpath>
+            <xpath expr="//h2[@t-if=\"o.state in ['sent', 'to approve']\"]" position="attributes">
+                <attribute name="style">display: none;</attribute>
+            </xpath>
+            <xpath expr="//h2[@t-if=\"o.state in ['purchase', 'done']\"]" position="attributes">
+                <attribute name="style">display: none;</attribute>
+            </xpath>
+            <xpath expr="//h2[@t-if=\"o.state == 'cancel'\"]" position="attributes">
+                <attribute name="style">display: none;</attribute>
+            </xpath>
             
         </template>
         

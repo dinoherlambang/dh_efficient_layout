@@ -16,9 +16,9 @@
             
             <!-- CHANGE LAYOUT TO SPACEY -->
             <!-- Replace web.external_layout with our Spacey Layout -->
-            <!-- <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
+            <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
                 <attribute name="t-call">dh_efficient_layout.external_layout_spacey</attribute>
-            </xpath> -->
+            </xpath>
             
             <!-- DISABLE OLD ADDRESS SECTION -->
             <!-- Note: Address xpath removed for compatibility - addresses handled in Spacey Layout header -->
@@ -136,8 +136,10 @@
             </xpath>
             
             <!-- REMOVE ORIGINAL INVOICE TITLE -->
-            <!-- Note: Removed xpath for h2 as it may not exist in all Odoo versions -->
-            <!-- Title now handled in layout header -->
+            <!-- Hide the original document title since it's now in our header -->
+            <xpath expr="//h2[span[@t-if=\"o.type == 'out_invoice' and o.state == 'posted'\"]]" position="attributes">
+                <attribute name="style">display: none;</attribute>
+            </xpath>
             
         </template>
         

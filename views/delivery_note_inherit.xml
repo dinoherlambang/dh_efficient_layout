@@ -14,6 +14,12 @@
         
         <template id="report_delivery_document_spacey" inherit_id="stock.report_delivery_document">
             
+            <!-- CHANGE LAYOUT TO SPACEY -->
+            <!-- Replace web.external_layout with our Spacey Layout -->
+            <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
+                <attribute name="t-call">dh_efficient_layout.external_layout_spacey</attribute>
+            </xpath>
+            
             <!-- DISABLE OLD ADDRESS SECTION -->
             <!-- Note: Address xpath removed for compatibility - addresses handled in Spacey Layout header -->
             
@@ -82,7 +88,10 @@
             </xpath>
             
             <!-- REMOVE ORIGINAL DELIVERY NOTE TITLE -->
-            <!-- Note: Removed xpath for h2 as it may not exist in all Odoo versions -->
+            <!-- Hide the original document title since it's now in our header -->
+            <xpath expr="//h2[span[@t-field='o.name']]" position="attributes">
+                <attribute name="style">display: none;</attribute>
+            </xpath>
             
         </template>
         
