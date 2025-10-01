@@ -47,7 +47,7 @@ No complex configuration needed - uses Odoo's standard layout selection mechanis
         'views/invoice_inherit.xml',
         'views/sale_order_inherit.xml',
         'views/purchase_order_inherit.xml',
-        # 'views/delivery_note_inherit.xml',
+        'views/delivery_note_inherit.xml',
     ],
     'installable': True,
     'auto_install': False,
