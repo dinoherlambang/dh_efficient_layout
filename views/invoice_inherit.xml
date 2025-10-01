@@ -50,8 +50,13 @@
                 <div id="informations" class="mt16 mb16" style="border-top: 1px solid #2C5282; padding: 12px 0;">
                     
                     <!-- SET INVOICE ADDRESS VARIABLES ONCE -->
-                    <t t-set="invoice_address" t-value="o.partner_id.address_get(['invoice'])['invoice'] if o.partner_id else False"/>
-                    <t t-set="partner_addr" t-value="o.env['res.partner'].browse(invoice_address) if invoice_address else o.partner_id"/>
+                    <t t-set="invoice_address_id" t-value="o.partner_id.address_get(['invoice'])['invoice'] if o.partner_id else False"/>
+                    <t t-set="invoice_partner" t-value="o.env['res.partner'].browse(invoice_address_id) if invoice_address_id else o.partner_id"/>
+                    
+                    <!-- DEBUG: Show what we're getting -->
+                    <div style="font-size: 12px; color: red; margin-bottom: 10px;" t-if="o.partner_id">
+                        DEBUG - Main Partner ID: <span t-esc="o.partner_id.id"/> | Invoice Address ID: <span t-esc="invoice_address_id"/> | Invoice Partner Name: <span t-esc="invoice_partner.name or 'NO NAME'"/>
+                    </div>
                     
                     <!-- FIRST ROW: Invoice Date | Value | Due Date | Value -->
                     <div class="row mb-2" t-if="o.invoice_date or (o.invoice_date_due and o.type == 'out_invoice' and o.state == 'posted')">
@@ -99,7 +104,7 @@
                         </div>
                         <!-- Customer Value -->
                         <div class="col-3" t-if="o.partner_id">
-                            <span style="font-size: 15px;" t-field="partner_addr.name"/>
+                            <span style="font-size: 15px;" t-field="invoice_partner.name"/>
                         </div>
                         
                         <!-- Fill remaining columns if only one field exists -->
@@ -119,15 +124,15 @@
                         </div>
                         
                         <!-- VAT Label (using invoice address partner) -->
-                        <div class="col-3" t-if="o.partner_id and partner_addr.vat">
+                        <div class="col-3" t-if="o.partner_id and invoice_partner.vat">
                             <strong style="color: #2C5282; font-size: 15px;">
                                 <t t-if="o.company_id.country_id.vat_label" t-esc="o.company_id.country_id.vat_label"/>
                                 <t t-else="">Tax ID</t>:
                             </strong>
                         </div>
                         <!-- VAT Value -->
-                        <div class="col-3" t-if="o.partner_id and partner_addr.vat">
-                            <span style="font-size: 15px;" t-field="partner_addr.vat"/>
+                        <div class="col-3" t-if="o.partner_id and invoice_partner.vat">
+                            <span style="font-size: 15px;" t-field="invoice_partner.vat"/>
                         </div>
                         
                         <!-- Reference Label (only if no customer code) -->
@@ -172,7 +177,7 @@
                         </div>
                         <div class="col-9">
                             <span style="font-size: 15px;">
-                                <t t-if="partner_addr.street"><span t-field="partner_addr.street"/></t><t t-if="partner_addr.street2">, <span t-field="partner_addr.street2"/></t><t t-if="partner_addr.city">, <span t-field="partner_addr.city"/></t><t t-if="partner_addr.state_id"> <span t-field="partner_addr.state_id.name"/></t><t t-if="partner_addr.zip"> <span t-field="partner_addr.zip"/></t><t t-if="partner_addr.country_id">, <span t-field="partner_addr.country_id.name"/></t>
+                                <t t-if="invoice_partner.street"><span t-field="invoice_partner.street"/></t><t t-if="invoice_partner.street2">, <span t-field="invoice_partner.street2"/></t><t t-if="invoice_partner.city">, <span t-field="invoice_partner.city"/></t><t t-if="invoice_partner.state_id"> <span t-field="invoice_partner.state_id.name"/></t><t t-if="invoice_partner.zip"> <span t-field="invoice_partner.zip"/></t><t t-if="invoice_partner.country_id">, <span t-field="invoice_partner.country_id.name"/></t>
                             </span>
                         </div>
                     </div>
