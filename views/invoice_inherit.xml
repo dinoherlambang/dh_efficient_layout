@@ -105,8 +105,8 @@
                         <div class="col-6" t-if="not o.invoice_origin and o.partner_id"></div>
                     </div>
                     
-                    <!-- THIRD ROW: Customer Code | Value | Reference | Value -->
-                    <div class="row mb-2" t-if="o.partner_id.ref or o.ref">
+                    <!-- THIRD ROW: Customer Code | Value | VAT | Value -->
+                    <div class="row mb-2" t-if="o.partner_id.ref or o.ref or o.partner_id">
                         <!-- Customer Code Label -->
                         <div class="col-3" t-if="o.partner_id.ref">
                             <strong style="color: #2C5282; font-size: 15px;">Customer Code:</strong>
@@ -116,21 +116,62 @@
                             <span style="font-size: 15px;" t-field="o.partner_id.ref"/>
                         </div>
                         
-                        <!-- Reference Label -->
-                        <div class="col-3" t-if="o.ref">
+                        <!-- VAT Label (using invoice address partner) -->
+                        <div class="col-3" t-if="o.partner_id">
+                            <t t-set="invoice_address" t-value="o.partner_id.address_get(['invoice'])['invoice']"/>
+                            <t t-set="partner_addr" t-value="o.env['res.partner'].browse(invoice_address)"/>
+                            <t t-if="partner_addr.vat">
+                                <strong style="color: #2C5282; font-size: 15px;">
+                                    <t t-if="o.company_id.country_id.vat_label" t-esc="o.company_id.country_id.vat_label"/>
+                                    <t t-else="">Tax ID</t>:
+                                </strong>
+                            </t>
+                        </div>
+                        <!-- VAT Value -->
+                        <div class="col-3" t-if="o.partner_id">
+                            <t t-set="invoice_address" t-value="o.partner_id.address_get(['invoice'])['invoice']"/>
+                            <t t-set="partner_addr" t-value="o.env['res.partner'].browse(invoice_address)"/>
+                            <t t-if="partner_addr.vat">
+                                <span style="font-size: 15px;" t-field="partner_addr.vat"/>
+                            </t>
+                        </div>
+                        
+                        <!-- Reference Label (only if no customer code) -->
+                        <div class="col-3" t-if="o.ref and not o.partner_id.ref">
                             <strong style="color: #2C5282; font-size: 15px;">Reference:</strong>
                         </div>
-                        <!-- Reference Value -->
-                        <div class="col-3" t-if="o.ref">
+                        <!-- Reference Value (only if no customer code) -->
+                        <div class="col-3" t-if="o.ref and not o.partner_id.ref">
                             <span style="font-size: 15px;" t-field="o.ref"/>
                         </div>
                         
-                        <!-- Fill remaining columns if only one field exists -->
-                        <div class="col-6" t-if="o.partner_id.ref and not o.ref"></div>
-                        <div class="col-6" t-if="not o.partner_id.ref and o.ref"></div>
+                        <!-- Fill remaining columns dynamically -->
+                        <t t-set="has_code" t-value="bool(o.partner_id.ref)"/>
+                        <t t-set="has_vat" t-value="bool(o.partner_id and o.env['res.partner'].browse(o.partner_id.address_get(['invoice'])['invoice']).vat)"/>
+                        <t t-set="has_ref" t-value="bool(o.ref and not o.partner_id.ref)"/>
+                        
+                        <!-- Fill empty columns when needed -->
+                        <div class="col-6" t-if="not has_code and not has_ref and has_vat"></div>
+                        <div class="col-6" t-if="has_code and not has_vat and not has_ref"></div>
+                        <div class="col-3" t-if="not has_code and not has_vat and has_ref"></div>
+                        <div class="col-9" t-if="not has_code and not has_vat and not has_ref"></div>
                     </div>
                     
-                    <!-- FOURTH ROW: Customer Address (spans full width for long addresses) -->
+                    <!-- FOURTH ROW: Reference (if customer code exists) -->
+                    <div class="row mb-2" t-if="o.ref and o.partner_id.ref">
+                        <!-- Reference Label -->
+                        <div class="col-3">
+                            <strong style="color: #2C5282; font-size: 15px;">Reference:</strong>
+                        </div>
+                        <!-- Reference Value -->
+                        <div class="col-3">
+                            <span style="font-size: 15px;" t-field="o.ref"/>
+                        </div>
+                        <!-- Empty columns -->
+                        <div class="col-6"></div>
+                    </div>
+                    
+                    <!-- FIFTH ROW: Customer Address (spans full width for long addresses) -->
                     <div class="row" t-if="o.partner_id">
                         <div class="col-3">
                             <strong style="color: #2C5282; font-size: 15px;">Address:</strong>
