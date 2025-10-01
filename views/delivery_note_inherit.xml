@@ -21,18 +21,15 @@
             </xpath>
             
             <!-- REMOVE ORIGINAL DELIVERY NOTE TITLE -->
-            <!-- Hide the h2 title by replacing it with empty content -->
-            <!-- <xpath expr="//h2" position="replace">
-                <div style="display: none;"></div>
-            </xpath> -->
-            <!-- <xpath expr="//h2" position="replace">
-            </xpath> -->
-            
+            <!-- Hide the h2 title since it's now in the spacey layout header -->
+            <xpath expr="//h2" position="replace">
+            </xpath>
             
             <!-- DISABLE OLD ADDRESS SECTION -->
-            <!-- <xpath expr="//t[@t-set='address']" position="replace">
+            <!-- Hide the original address section since it's moved to table header -->
+            <xpath expr="//t[@t-set='address']" position="replace">
                 <div style="display: none;"/>
-            </xpath> -->
+            </xpath>
 
             <!-- STYLE TABLE HEADERS WITH BOLD LINES -->
             <!-- Add bold borders to table headers like Subtotal/Total -->
@@ -44,6 +41,22 @@
             <!-- Make header text bold and add padding -->
             <xpath expr="//table[contains(@class,'table')]//thead//th" position="attributes">
                 <attribute name="style">font-weight: bold; padding: 10px 8px; background-color: #f8f9fa;</attribute>
+            </xpath>
+            
+            <!-- ADD DESTINATION ADDRESS TO TABLE HEADER -->
+            <!-- Insert destination address row before the column headers -->
+            <xpath expr="//table[contains(@class,'table')]//thead//tr[1]" position="before">
+                <tr t-if="o.partner_id">
+                    <td colspan="2" style="border: none; padding: 8px; background-color: #ffffff;">
+                        <strong style="color: #2C5282; font-size: 15px;">Destination: </strong>
+                        <span style="font-size: 15px;">
+                            <!-- Get the proper delivery address -->
+                            <t t-set="delivery_address" t-value="o.partner_id.address_get(['delivery'])['delivery']"/>
+                            <t t-set="partner_addr" t-value="o.env['res.partner'].browse(delivery_address)"/>
+                            <span t-field="partner_addr.name"/><t t-if="partner_addr.street">, <span t-field="partner_addr.street"/></t><t t-if="partner_addr.street2">, <span t-field="partner_addr.street2"/></t><t t-if="partner_addr.city">, <span t-field="partner_addr.city"/></t><t t-if="partner_addr.state_id"> <span t-field="partner_addr.state_id.name"/></t><t t-if="partner_addr.zip"> <span t-field="partner_addr.zip"/></t><t t-if="partner_addr.country_id">, <span t-field="partner_addr.country_id.name"/></t>
+                        </span>
+                    </td>
+                </tr>
             </xpath>
             
             <!-- CUSTOMIZE DELIVERY NOTE INFORMATIONS SECTION -->
@@ -82,18 +95,6 @@
                         <div class="col-6" t-if="o.origin and not o.state"></div>
                         <div class="col-6" t-if="not o.origin and o.state"></div>
                     </div>
-                    
-                    <!-- SECOND ROW: Destination Address (spans full width) -->
-                    <!-- <div class="row" t-if="o.partner_id">
-                        <div class="col-3">
-                            <strong style="color: #2C5282; font-size: 15px;">Destination:</strong>
-                        </div>
-                        <div class="col-9">
-                            <span style="font-size: 15px;">
-                                <span t-field="o.partner_id.name"/><t t-if="o.partner_id.street">, <span t-field="o.partner_id.street"/></t><t t-if="o.partner_id.street2">, <span t-field="o.partner_id.street2"/></t><t t-if="o.partner_id.city">, <span t-field="o.partner_id.city"/></t><t t-if="o.partner_id.state_id"> <span t-field="o.partner_id.state_id.name"/></t><t t-if="o.partner_id.zip"> <span t-field="o.partner_id.zip"/></t><t t-if="o.partner_id.country_id">, <span t-field="o.partner_id.country_id.name"/></t>
-                            </span>
-                        </div>
-                    </div> -->
                     
                 </div>
             </xpath>
