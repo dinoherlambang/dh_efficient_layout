@@ -24,12 +24,8 @@
             <xpath expr="//h2" position="replace">
             </xpath>
             
-            <!-- REMOVE DUPLICATE PARTNER/ADDRESS INFORMATION -->
-            <!-- Remove the entire address section since it's handled in Spacey Layout header -->
             <xpath expr="//t[@t-set='address']" position="replace">
-                <div style="display: none;"/>
             </xpath>
-           
             
             <!-- STYLE TABLE HEADERS WITH BOLD LINES -->
             <!-- Add bold borders to table headers like Subtotal/Total -->
@@ -53,12 +49,9 @@
                     <t t-set="invoice_address_id" t-value="o.partner_id.address_get(['invoice'])['invoice'] if o.partner_id else False"/>
                     <t t-set="invoice_partner" t-value="o.env['res.partner'].browse(invoice_address_id) if invoice_address_id else o.partner_id"/>
                     
-                    <!-- DEBUG: Show what we're getting -->
-                    <div style="font-size: 12px; color: black; margin-bottom: 10px;" t-if="o.partner_id">
-                        DEBUG - Main Partner ID: <span t-esc="o.partner_id.id"/> | Invoice Address ID: <span t-esc="invoice_address_id"/> | Invoice Partner Name: <span t-esc="invoice_partner.name or 'NO NAME'"/>
-                    </div>
-                    
-                    <!-- FIRST ROW: Invoice Date | Value | Due Date | Value -->
+                    <!-- Simplified: Just use the original partner for customer name (it's always correct) -->
+                    <t t-set="display_partner" t-value="o.partner_id"/>
+                    <t t-set="address_partner" t-value="invoice_partner"/>                    <!-- FIRST ROW: Invoice Date | Value | Due Date | Value -->
                     <div class="row mb-2" t-if="o.invoice_date or (o.invoice_date_due and o.type == 'out_invoice' and o.state == 'posted')">
                         <!-- Invoice Date Label -->
                         <div class="col-3" t-if="o.invoice_date">
@@ -87,8 +80,8 @@
                         <div class="col-6" t-if="not o.invoice_date and (o.invoice_date_due and o.type == 'out_invoice' and o.state == 'posted')"></div>
                     </div>
                     
-                    <!-- SECOND ROW: Source | Value | Customer Address | Value -->
-                    <div class="row mb-2" t-if="o.invoice_origin or o.partner_id">
+                    <!-- SECOND ROW: Source | Value | (no customer already in header) -->
+                    <div class="row mb-2" t-if="o.invoice_origin">
                         <!-- Source Label -->
                         <div class="col-3" t-if="o.invoice_origin">
                             <strong style="color: #000; font-size: 15px;">Source:</strong>
@@ -98,31 +91,13 @@
                             <span style="font-size: 15px;" t-field="o.invoice_origin"/>
                         </div>
                         
-                        <!-- Customer Label -->
-                        <div class="col-3" t-if="o.partner_id">
-                            <strong style="color: #000; font-size: 15px;">Customer:</strong>
+                        <!-- Empty columns (customer info is already in header area) -->
+                        <div class="col-6">
                         </div>
-                        <!-- Customer Value -->
-                        <div class="col-3" t-if="o.partner_id">
-                            <span style="font-size: 15px;" t-field="invoice_partner.name"/>
-                        </div>
-                        
-                        <!-- Fill remaining columns if only one field exists -->
-                        <div class="col-6" t-if="o.invoice_origin and not o.partner_id"></div>
-                        <div class="col-6" t-if="not o.invoice_origin and o.partner_id"></div>
                     </div>
                     
-                    <!-- THIRD ROW: Customer Code | Value | VAT | Value -->
-                    <div class="row mb-2" t-if="o.partner_id.ref or o.ref or o.partner_id">
-                        <!-- Customer Code Label -->
-                        <div class="col-3" t-if="o.partner_id.ref">
-                            <strong style="color: #000; font-size: 15px;">Customer Code:</strong>
-                        </div>
-                        <!-- Customer Code Value -->
-                        <div class="col-3" t-if="o.partner_id.ref">
-                            <span style="font-size: 15px;" t-field="o.partner_id.ref"/>
-                        </div>
-                        
+                    <!-- THIRD ROW: VAT | Value | Reference | Value -->
+                    <div class="row mb-2" t-if="o.ref or (o.partner_id and invoice_partner.vat)">
                         <!-- VAT Label (using invoice address partner) -->
                         <div class="col-3" t-if="o.partner_id and invoice_partner.vat">
                             <strong style="color: #000; font-size: 15px;">
@@ -135,42 +110,21 @@
                             <span style="font-size: 15px;" t-field="invoice_partner.vat"/>
                         </div>
                         
-                        <!-- Reference Label (only if no customer code) -->
-                        <div class="col-3" t-if="o.ref and not o.partner_id.ref">
-                            <strong style="color: #000; font-size: 15px;">Reference:</strong>
-                        </div>
-                        <!-- Reference Value (only if no customer code) -->
-                        <div class="col-3" t-if="o.ref and not o.partner_id.ref">
-                            <span style="font-size: 15px;" t-field="o.ref"/>
-                        </div>
-                        
-                        <!-- Fill remaining columns dynamically -->
-                        <t t-set="has_code" t-value="bool(o.partner_id.ref)"/>
-                        <t t-set="has_vat" t-value="bool(o.partner_id and o.env['res.partner'].browse(o.partner_id.address_get(['invoice'])['invoice']).vat)"/>
-                        <t t-set="has_ref" t-value="bool(o.ref and not o.partner_id.ref)"/>
-                        
-                        <!-- Fill empty columns when needed -->
-                        <div class="col-6" t-if="not has_code and not has_ref and has_vat"></div>
-                        <div class="col-6" t-if="has_code and not has_vat and not has_ref"></div>
-                        <div class="col-3" t-if="not has_code and not has_vat and has_ref"></div>
-                        <div class="col-9" t-if="not has_code and not has_vat and not has_ref"></div>
-                    </div>
-                    
-                    <!-- FOURTH ROW: Reference (if customer code exists) -->
-                    <div class="row mb-2" t-if="o.ref and o.partner_id.ref">
                         <!-- Reference Label -->
-                        <div class="col-3">
+                        <div class="col-3" t-if="o.ref">
                             <strong style="color: #000; font-size: 15px;">Reference:</strong>
                         </div>
                         <!-- Reference Value -->
-                        <div class="col-3">
+                        <div class="col-3" t-if="o.ref">
                             <span style="font-size: 15px;" t-field="o.ref"/>
                         </div>
-                        <!-- Empty columns -->
-                        <div class="col-6"></div>
+                        
+                        <!-- Fill remaining columns if only one field exists -->
+                        <div class="col-6" t-if="(o.partner_id and invoice_partner.vat) and not o.ref"></div>
+                        <div class="col-6" t-if="not (o.partner_id and invoice_partner.vat) and o.ref"></div>
                     </div>
                     
-                    <!-- FIFTH ROW: Customer Address (spans full width for long addresses) -->
+                    <!-- FOURTH ROW: Customer Address (spans full width for long addresses) -->
                     <div class="row" t-if="o.partner_id">
                         <div class="col-3">
                             <strong style="color: #000; font-size: 15px;">Address:</strong>

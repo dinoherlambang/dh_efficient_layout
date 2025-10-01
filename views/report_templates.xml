@@ -40,7 +40,7 @@
                             <!-- and shows appropriate title with specific states for invoices -->
                             
                             <!-- Document Title - Enhanced QWeb Compatible Logic -->
-                            <h2 style="margin: 3px 0; color: #2C5282; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">
+                            <h2 style="margin: 3px 0; color: #000; font-weight: bold; font-size: 25px; text-transform: uppercase; letter-spacing: 1px;">
                                 <!-- Stock Picking -->
                                 <t t-if="o and o._name == 'stock.picking'">Delivery Note</t>
                                 
@@ -74,7 +74,7 @@
                                 <t t-if="not o or o._name not in ['stock.picking', 'account.move', 'sale.order', 'purchase.order']">Document</t>
                             </h2>
                             <!-- Document Number -->
-                            <p style="margin: 2px 0; font-weight: bold; font-size: 15px; color: #2C5282;" t-if="o and o.name">
+                            <p style="margin: 2px 0; font-weight: bold; font-size: 25px; color: #000;" t-if="o and o.name">
                                 <span t-field="o.name"/>
                             </p>
                         </div>
@@ -85,7 +85,7 @@
                         <div class="col-3" name="company_address" style="text-align: right;">
                             <div style="font-size: 12px; line-height: 1.3;">
                                 <!-- Company Name (bold and larger) -->
-                                <div t-if="company.name" style="font-weight: bold; font-size: 15px; color: #2C5282; margin-bottom: 2px;">
+                                <div t-if="company.name" style="font-weight: bold; font-size: 15px; color: #000; margin-bottom: 2px;">
                                     <span t-field="company.name"/>
                                 </div>
                                 <!-- Company Tax ID/VAT Number -->
