@@ -150,22 +150,11 @@
             but our Spacey Layout already displays it in the header. This creates duplication.
             
             Challenge: Other modules (like stock_picking_group_by_partner_by_carrier) may
-            modify the document structure, making simple XPath expressions fail.
+            modify the document structure, making XPath expressions fail completely.
             
-            Solution: Multiple fallback approaches to ensure title is hidden regardless
-            of which modules are installed.
+            Solution: Rely primarily on CSS fallback method for maximum compatibility.
+            XPath expressions can fail if other modules significantly alter the DOM structure.
             -->
-            
-            <!-- PRIMARY: Target specific h2 with delivery note name -->
-            <xpath expr="//div[@class='page']//h2[contains(.,'o.name') or span[@t-field='o.name']]" position="attributes">
-                <attribute name="style">display: none;</attribute>
-            </xpath>
-            
-            <!-- SECONDARY FALLBACK: Hide any h2 in the page content area -->
-            <!-- This catches cases where other modules change the h2 structure -->
-            <xpath expr="//div[@class='page']//h2" position="attributes">
-                <attribute name="t-if">not (o and o.name)</attribute>
-            </xpath>
             
             <!-- 
             HIDE PARTNER ADDRESS SECTIONS FROM CONFLICTING MODULES
@@ -178,18 +167,10 @@
             - t[@t-call='web.address_layout'] from various address display modules
             - Custom address widgets from OCA modules
             
-            Solution: Disable these elements to prevent address duplication
+            Solution: Use CSS fallback method instead of XPath since other modules
+            may have already modified or removed these elements. The CSS approach
+            is more reliable and works regardless of DOM structure changes.
             -->
-            
-            <!-- Hide the partner header section from base template -->
-            <xpath expr="//t[@name='partner_header']" position="attributes">
-                <attribute name="style">display: none;</attribute>
-            </xpath>
-            
-            <!-- Disable web.address_layout calls that show partner info -->
-            <xpath expr="//t[@t-call='web.address_layout']" position="attributes">
-                <attribute name="t-if">False</attribute>
-            </xpath>
             
             <!-- 
             CSS FALLBACK METHOD FOR MAXIMUM COMPATIBILITY
@@ -211,21 +192,32 @@
             <xpath expr="//div[@class='page']" position="inside">
                 <style>
                     /* HIDE DOCUMENT TITLE IN BODY (already in header) */
-                    /* Targets the first h2 in article section which is typically the doc title */
-                    .article h2:first-of-type { display: none !important; }
+                    /* Targets h2 elements that typically contain document titles */
+                    .o_report_layout_spacey .page h2:first-of-type { display: none !important; }
+                    .o_report_layout_spacey .page h2[class*="title"] { display: none !important; }
                     
                     /* HIDE PARTNER ADDRESS DISPLAYS (already in header) */
                     /* These target common address elements from various modules */
                     .o_report_layout_spacey .address { display: none !important; }
                     .o_report_layout_spacey t[name="partner_header"] { display: none !important; }
+                    .o_report_layout_spacey div[name="partner_header"] { display: none !important; }
+                    .o_report_layout_spacey .oe_structure { display: none !important; }
+                    .o_report_layout_spacey .o_address_format { display: none !important; }
+                    
+                    /* HIDE WEB.ADDRESS_LAYOUT CONTENT */
+                    /* These elements may be added by web.address_layout calls */
+                    .o_report_layout_spacey .address_format { display: none !important; }
+                    .o_report_layout_spacey div[t-field="partner.name"] { display: none !important; }
+                    .o_report_layout_spacey div[t-field="partner.street"] { display: none !important; }
                     
                     /* ENSURE OUR INFORMATION SECTION STYLING IS PRESERVED */
                     /* Reinforces our custom information section styling */
                     .o_report_layout_spacey #informations {
-                        border-top: 1px solid #2C5282;
-                        border-bottom: 1px solid #2C5282;
-                        padding: 12px 0;
-                        margin: 16px 0;
+                        border-top: 1px solid #2C5282 !important;
+                        border-bottom: 1px solid #2C5282 !important;
+                        padding: 12px 0 !important;
+                        margin: 16px 0 !important;
+                        display: block !important;
                     }
                 </style>
             </xpath>
