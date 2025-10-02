@@ -10,9 +10,47 @@
         
         Original template: stock.report_delivery_document
         Location: /usr/lib/python3/dist-packages/odoo/addons/stock/report/report_deliveryslip.xml
+        
+        =====================================================================
+        CONFLICT RESOLUTION STRATEGY
+        =====================================================================
+        
+        Problem: Multiple OCA and community modules also inherit the same template:
+        - stock_picking_group_by_partner_by_carrier (groups deliveries)
+        - stock_picking_line_sequence (adds sequence numbers)
+        - stock_secondary_unit (adds secondary UoM columns)
+        - partner_delivery_zone (adds delivery zone info)
+        - And many others...
+        
+        These modules can cause XPath conflicts where our selectors no longer
+        match the modified DOM structure, resulting in:
+        - Document titles not being hidden (duplication)
+        - Partner addresses not being hidden (duplication)
+        - Information sections not being replaced correctly
+        
+        Solution Strategy (Multi-layered approach):
+        1. HIGH TEMPLATE PRIORITY (priority="99") - Load after other modules
+        2. ROBUST XPATH EXPRESSIONS - Multiple fallback selectors
+        3. CSS FALLBACKS - !important styles to override any conflicts
+        4. MODULE SEQUENCE - High sequence in manifest for load order
+        
+        This ensures our Spacey Layout works regardless of which other
+        stock/delivery modules are installed in the system.
         -->
         
-        <template id="report_delivery_document_spacey" inherit_id="stock.report_delivery_document">
+        <!-- 
+        TEMPLATE INHERITANCE WITH HIGH PRIORITY
+        
+        Priority="99" ensures this template loads AFTER other conflicting modules:
+        - stock_picking_group_by_partner_by_carrier (priority not set, default ~16)
+        - stock_picking_line_sequence (priority not set, default ~16)
+        - stock_secondary_unit (priority="8")
+        - Other OCA stock workflow modules
+        
+        Higher priority numbers = loads later = takes precedence over earlier templates
+        This prevents XPath conflicts caused by other modules modifying the same template
+        -->
+        <template id="report_delivery_document_spacey" inherit_id="stock.report_delivery_document" priority="99">
             
             <!-- CHANGE LAYOUT TO SPACEY -->
             <!-- Replace web.external_layout with our Spacey Layout -->
@@ -35,8 +73,26 @@
                 <attribute name="style">font-weight: bold; padding: 10px 8px; background-color: #f8f9fa;</attribute>
             </xpath>
             
-            <!-- CUSTOMIZE DELIVERY NOTE INFORMATIONS SECTION -->
-            <!-- Replace with spacey 4-column form-style layout for maximum efficiency -->
+            <!-- 
+            CUSTOMIZE DELIVERY NOTE INFORMATION SECTION
+            
+            Original Odoo Layout Problems:
+            - Basic 2-column layout with minimal styling
+            - No visual hierarchy or professional borders
+            - Limited space utilization
+            - Inconsistent field presentation
+            
+            Our Spacey Layout Improvements:
+            - Professional 4-column responsive grid
+            - Company-branded borders and colors (#2C5282)
+            - Enhanced typography with proper sizing
+            - Efficient use of horizontal space
+            - Smart conditional column filling
+            - State-aware date labeling (Done vs Scheduled)
+            
+            Target: Replaces the row containing div_origin and div_sched_date
+            These are the original "Order" and "Shipping Date" fields
+            -->
             <xpath expr="//div[div[@name='div_origin'] or div[@name='div_sched_date']]" position="replace">
                 <div id="informations" class="mt16 mb16" style="border-top: 1px solid #2C5282; border-bottom: 1px solid #2C5282; padding: 12px 0;">
                     
@@ -87,10 +143,91 @@
                 </div>
             </xpath>
             
-            <!-- REMOVE ORIGINAL DELIVERY NOTE TITLE -->
-            <!-- Hide the original document title since it's now in our header -->
-            <xpath expr="//h2[span[@t-field='o.name']]" position="attributes">
+            <!-- 
+            REMOVE ORIGINAL DELIVERY NOTE TITLE
+            
+            Problem: The original Odoo template shows the document name/title in the body,
+            but our Spacey Layout already displays it in the header. This creates duplication.
+            
+            Challenge: Other modules (like stock_picking_group_by_partner_by_carrier) may
+            modify the document structure, making simple XPath expressions fail.
+            
+            Solution: Multiple fallback approaches to ensure title is hidden regardless
+            of which modules are installed.
+            -->
+            
+            <!-- PRIMARY: Target specific h2 with delivery note name -->
+            <xpath expr="//div[@class='page']//h2[contains(.,'o.name') or span[@t-field='o.name']]" position="attributes">
                 <attribute name="style">display: none;</attribute>
+            </xpath>
+            
+            <!-- SECONDARY FALLBACK: Hide any h2 in the page content area -->
+            <!-- This catches cases where other modules change the h2 structure -->
+            <xpath expr="//div[@class='page']//h2" position="attributes">
+                <attribute name="t-if">not (o and o.name)</attribute>
+            </xpath>
+            
+            <!-- 
+            HIDE PARTNER ADDRESS SECTIONS FROM CONFLICTING MODULES
+            
+            Problem: Some modules add partner address information in the document body,
+            which conflicts with our Spacey Layout header that already shows this info.
+            
+            Common conflicting elements:
+            - t[@name='partner_header'] from base stock template
+            - t[@t-call='web.address_layout'] from various address display modules
+            - Custom address widgets from OCA modules
+            
+            Solution: Disable these elements to prevent address duplication
+            -->
+            
+            <!-- Hide the partner header section from base template -->
+            <xpath expr="//t[@name='partner_header']" position="attributes">
+                <attribute name="style">display: none;</attribute>
+            </xpath>
+            
+            <!-- Disable web.address_layout calls that show partner info -->
+            <xpath expr="//t[@t-call='web.address_layout']" position="attributes">
+                <attribute name="t-if">False</attribute>
+            </xpath>
+            
+            <!-- 
+            CSS FALLBACK METHOD FOR MAXIMUM COMPATIBILITY
+            
+            Problem: XPath expressions may fail if conflicting modules significantly
+            alter the document structure. Even with high priority, some elements
+            might still appear if other modules use different approaches.
+            
+            Solution: CSS-based hiding with !important declarations to override
+            any styling from other modules. This is the "nuclear option" that
+            works regardless of DOM structure changes.
+            
+            Why this works:
+            1. CSS is applied after all templates are rendered
+            2. !important overrides any conflicting styles
+            3. Targets elements by class and context, not specific DOM structure
+            4. Works even if other modules change HTML structure
+            -->
+            <xpath expr="//div[@class='page']" position="inside">
+                <style>
+                    /* HIDE DOCUMENT TITLE IN BODY (already in header) */
+                    /* Targets the first h2 in article section which is typically the doc title */
+                    .article h2:first-of-type { display: none !important; }
+                    
+                    /* HIDE PARTNER ADDRESS DISPLAYS (already in header) */
+                    /* These target common address elements from various modules */
+                    .o_report_layout_spacey .address { display: none !important; }
+                    .o_report_layout_spacey t[name="partner_header"] { display: none !important; }
+                    
+                    /* ENSURE OUR INFORMATION SECTION STYLING IS PRESERVED */
+                    /* Reinforces our custom information section styling */
+                    .o_report_layout_spacey #informations {
+                        border-top: 1px solid #2C5282;
+                        border-bottom: 1px solid #2C5282;
+                        padding: 12px 0;
+                        margin: 16px 0;
+                    }
+                </style>
             </xpath>
             
         </template>

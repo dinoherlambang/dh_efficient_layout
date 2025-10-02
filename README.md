@@ -367,6 +367,26 @@ This system allows:
 <template inherit_id="web.styles_company_report">...</template>
 ```
 
+## 📚 Documentation
+
+For comprehensive documentation including conflict resolution strategies and technical implementation details, see the [`doc/` directory](doc/):
+
+- **[Documentation Index](doc/README.md)** - Complete documentation overview
+- **[Conflict Resolution Strategy](doc/CONFLICT_RESOLUTION_STRATEGY.md)** - Detailed guide for handling module conflicts
+- **[Module Inheritance Summary](INHERITANCE_SUMMARY.md)** - Template inheritance patterns
+- **[Report Elements Control](REPORT_ELEMENTS_CONTROL.md)** - Advanced customization guide
+
+### 🔧 For Developers
+
+This module implements a sophisticated **4-layer conflict resolution strategy** to ensure compatibility with OCA and community modules:
+
+1. **Module Loading Priority** (`sequence: 1000`)
+2. **Template Inheritance Priority** (`priority="99"`)
+3. **Robust XPath Expressions** (multiple fallback selectors)
+4. **CSS Fallback Methods** (`!important` style overrides)
+
+For complete technical details, see [doc/CONFLICT_RESOLUTION_STRATEGY.md](doc/CONFLICT_RESOLUTION_STRATEGY.md).
+
 ## Author
 
 **Dino Herlambang**

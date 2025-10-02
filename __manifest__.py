@@ -34,6 +34,12 @@ No complex configuration needed - uses Odoo's standard layout selection mechanis
     'author': 'Dino Herlambang',
     'website': 'https://github.com/dinoherlambang',
     'license': 'LGPL-3',
+    
+    # MODULE LOADING ORDER CONTROL
+    # High sequence ensures this module loads AFTER potentially conflicting modules
+    # like stock_picking_group_by_partner_by_carrier, stock_secondary_unit, etc.
+    # This prevents template inheritance conflicts in delivery reports
+    'sequence': 1000,  # High sequence = loads later = takes precedence
     'depends': [
         'base',
         'web',

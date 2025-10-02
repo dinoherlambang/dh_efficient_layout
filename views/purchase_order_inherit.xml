@@ -107,16 +107,16 @@
             
             <!-- REMOVE ORIGINAL PURCHASE ORDER TITLES -->
             <!-- Hide all original document titles since they're now in our header -->
-            <xpath expr="//h2[@t-if=\"o.state == 'draft'\"]" position="attributes">
+            <xpath expr="//h2[contains(@t-if,'draft')]" position="attributes">
                 <attribute name="style">display: none;</attribute>
             </xpath>
-            <xpath expr="//h2[@t-if=\"o.state in ['sent', 'to approve']\"]" position="attributes">
+            <xpath expr="//h2[contains(@t-if,'sent')]" position="attributes">
                 <attribute name="style">display: none;</attribute>
             </xpath>
-            <xpath expr="//h2[@t-if=\"o.state in ['purchase', 'done']\"]" position="attributes">
+            <xpath expr="//h2[contains(@t-if,'purchase')]" position="attributes">
                 <attribute name="style">display: none;</attribute>
             </xpath>
-            <xpath expr="//h2[@t-if=\"o.state == 'cancel'\"]" position="attributes">
+            <xpath expr="//h2[contains(@t-if,'cancel')]" position="attributes">
                 <attribute name="style">display: none;</attribute>
             </xpath>
             
