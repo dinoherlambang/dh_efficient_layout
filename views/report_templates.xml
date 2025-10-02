@@ -3,8 +3,10 @@
     <data>
         <!-- SPACEY LAYOUT MAIN TEMPLATE -->
         <template id="external_layout_spacey">
+            <!-- Ensure company variable is available -->
+            <t t-set="company" t-value="company or user.company_id or request.env.company"/>
             <!-- Header Section -->
-            <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
+            <div t-attf-class="header o_company_#{company.id if company else 'default'}_layout" t-att-style="report_header_style">
                 <div class="o_spacey_header">
                     <div class="row">
                         
@@ -94,7 +96,7 @@
             </div>
 
             <!-- ===== DOCUMENT BODY/CONTENT AREA ===== -->
-            <div t-attf-class="article o_report_layout_spacey o_company_#{company.id}_layout" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
+            <div t-attf-class="article o_report_layout_spacey o_company_#{company.id if company else 'default'}_layout" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
                 <!-- Address Layout: Company address information (used by some document types) -->
                 <t t-call="web.address_layout"/>
                 
@@ -108,7 +110,7 @@
             <!-- Clean footer with reduced thickness and page numbering -->
             <!-- Uses company-specific styling for consistent branding -->
             <!-- Only shows page numbers in PDF mode for better print formatting -->
-            <div t-attf-class="footer o_spacey_footer o_company_#{company.id}_layout" style="border-top: 2px solid #000; padding-top: 10px;">
+            <div t-attf-class="footer o_spacey_footer o_company_#{company.id if company else 'default'}_layout" style="border-top: 2px solid #000; padding-top: 10px;">
                 <div class="row mt4">
                     <div class="col-8">
                         <div style="display: flex; flex-direction: column;">
